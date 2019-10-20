@@ -23,7 +23,7 @@ CREATE TABLE Company (
 );
 
 CREATE TABLE Promotion (
-	promotionId int auto_increment not null unique,user
+	promotionId int auto_increment not null unique,
     promocode varchar(20),
     promoPercent smallint,
     exprireDate timestamp,
