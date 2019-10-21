@@ -58,6 +58,8 @@ CREATE TABLE FeedbackOnProduct(
     foreign key (product) references Product(id)
 );
 
+ALTER TABLE feedbackonproduct modify column likes int default 0;
+
 CREATE TABLE FeebackOnSite(
     fosId int auto_increment not null unique,
 	fosType enum("Bao cao","Gop y"),
@@ -68,14 +70,6 @@ CREATE TABLE FeebackOnSite(
     foreign key (user) references User(uid)
 );
 
-CREATE TABLE ProductImages (
-	imageId int auto_increment not null unique,
-    imageUrl varchar(255),
-    feature boolean,
-    product int,
-    primary key (imageId),
-    foreign key (product) references Product(id)
-);
 
 -- Favorites for products
 CREATE TABLE Favorites (
