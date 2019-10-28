@@ -4,9 +4,9 @@ SELECT
 product.*, promotion.promotionId, company.companyName
 FROM ((Product
 INNER JOIN Company
-ON product.id = company.companyId)
+ON product.company = company.companyId)
 INNER JOIN promotion
-ON product.id = promotion.promotionId);
+ON product.promotion = promotion.promotionId);
 
 -- Lay tong hong tin feedback tren cac san pham
 SELECT 

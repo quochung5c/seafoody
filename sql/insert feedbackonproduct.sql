@@ -27,3 +27,5 @@ INSERT INTO productimage(imageUrl,imageDesc,featureIn,product) VALUES ('friedsqu
 
 
 
+
+

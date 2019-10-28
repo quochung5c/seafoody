@@ -81,4 +81,3 @@ CREATE TABLE Favorites (
     foreign key (product) references Product(id)
 );
 
-

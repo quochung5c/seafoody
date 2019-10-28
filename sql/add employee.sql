@@ -1,3 +1,4 @@
+DROP TABLE employee;
 CREATE TABLE Employee (
 	empId int auto_increment not null unique,
     firstName varchar(255) not null,
@@ -6,7 +7,10 @@ CREATE TABLE Employee (
     user int,
     company int,
     position enum('Nhân viên','Quản lý'),
-    created_at timestamp default now()
+    created_at timestamp default now(),
+    primary key (empId),
+    foreign key (user) references User(uid),
+    foreign key (company) references Company(companyId)
 );
 INSERT INTO Employee (firstName,lastName,workingStatus,user,company,position) VALUES ('Nguyễn','Hùng','Offline',1,1,'Nhân viên');
 INSERT INTO Employee (firstName,lastName,workingStatus,user,company,position) VALUES ('Nguyễn','Long','Online',3,2,'Quản lý');
