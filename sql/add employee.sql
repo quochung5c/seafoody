@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 DROP TABLE employee;
+=======
+DROP TABLE Employee;
+>>>>>>> 8ec01ba8d602ed0b380dc4ff1e076f40026d3822
 CREATE TABLE Employee (
 	empId int auto_increment not null unique,
     firstName varchar(255) not null,

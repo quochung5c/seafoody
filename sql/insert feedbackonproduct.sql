@@ -25,7 +25,28 @@ INSERT INTO productimage(imageUrl,imageDesc,featureIn,product) VALUES ('dokho.co
 INSERT INTO productimage(imageUrl,imageDesc,featureIn,product) VALUES ('muckho','Nhiều con mực khô',false,3);
 INSERT INTO productimage(imageUrl,imageDesc,featureIn,product) VALUES ('friedsquid','Con mực khô đáng yêu',false,3);
 
+-- INSERT Favorites
+SELECT * from favorites;
+SELECT * FROM Product WHERE id = 1;
+SELECT * FROM user;
 
+ALTER TABLE favorites ADD likes_at timestamp default now();
+
+-- Likes action
+INSERT INTO Favorites(product,customer) VALUES (1,1);
+UPDATE Product SET likes = likes + 1 WHERE id = 1;
+
+INSERT INTO Favorites(product,customer) VALUES (1,2);
+UPDATE Product SET likes = likes + 1 WHERE id = 2;
+
+INSERT INTO Favorites(product,customer) VALUES (2,3);
+UPDATE Product SET likes = likes + 1 WHERE id = 3;
+
+INSERT INTO Favorites(product,customer) VALUES (3,3);
+UPDATE Product SET likes = likes + 1 WHERE id = 3;
+
+SELECT * FROM Favorites;
+SELECT * FROM product;
 
 
 
