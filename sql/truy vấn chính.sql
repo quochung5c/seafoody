@@ -4,9 +4,9 @@ SELECT
 product.*, promotion.promotionId, company.companyName
 FROM ((Product
 INNER JOIN Company
-ON product.id = company.companyId)
+ON product.company = company.companyId)
 INNER JOIN promotion
-ON product.id = promotion.promotionId);
+ON product.promotion = promotion.promotionId);
 
 -- Lay tong hong tin feedback tren cac san pham
 SELECT 
@@ -44,4 +44,15 @@ FROM productimage
 WHERE product.id = 3 AND productimage.featureIn = 0; 
 
 
+SELECT * FROM favorites;
+SELECT * FROM ProductImage;
+-- Danh sách product được yêu thích bởi người dùng.
+SELECT product.*, productimage.imageUrl FROM (((Favorites
+	INNER JOIN User ON favorites.customer = user.uid)
+    INNER JOIN Product ON favorites.product = product.id)
+	JOIN productimage ON favorites.product = productimage.product)
+ WHERE favorites.customer = 3 AND productimage.featureIn = 1;
 
+-- Sửa đơn vị cho các sản phẩm
+SELECT * FROM Product;
+UPDATE Product SET pricePerRatio = 'kg' WHERE id = 2 OR id = 3;
