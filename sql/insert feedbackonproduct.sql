@@ -15,7 +15,6 @@ INSERT INTO feebackonsite(fosType,user,fosText) values ('Bao cao',2,'Mình thấ
 INSERT INTO feebackonsite(fosType,user,fosText) values ('Gop y',2,'Mình thích giao diện web này');
 INSERT INTO feebackonsite(fosType,user,fosText) values ('Bao cao',1,'Công ty chưa phản hồi feedback');
 
-
 SELECT * FROM Product;
 
 -- INSERT Product Images
@@ -48,5 +47,28 @@ UPDATE Product SET likes = likes + 1 WHERE id = 3;
 SELECT  * FROM Favorites;
 SELECT * FROM product;
 
+-- Edit feedback on product and on site
+SELECT * FROM feebackonsite;
 
+ALTER TABLE feebackonsite ADD fosImage varchar(255);
+ALTER TABLE feedbackonproduct ADD fopImage varchar(255);
 
+CREATE TABLE FeedbackType (
+	typeId int not null unique primary key,
+    feebackText varchar(100),
+    typeDesc varchar(255)
+);
+INSERT INTO FeedbackType VALUES (101,'Báo cáo','Báo cáo những sai sót trong quá trình sử dụng');
+INSERT INTO FeedbackType VALUES (102,'Góp ý', 'Đề xuất trong việc phát triển, sản xuất');
+INSERT INTO FeedbackType VALUES (103,'Khác','Đánh giá khác liên quan đến sản phẩm');
+
+ALTER TABLE feebackonsite DROP COLUMN fosType;
+ALTER TABLE feedbackonproduct DROP COLUMN fopType;
+
+ALTER TABLE feebackonsite ADD fbType int;
+ALTER TABLE feebackonsite ADD foreign key (fbType) references FeedbackType(typeId) on delete cascade;
+
+ALTER TABLE feedbackonproduct ADD fbType int;
+ALTER TABLE feedbackonproduct ADD foreign key (fbType) references FeedbackType(typeId) on delete cascade;
+
+SELECT * FROM feedbackonproduct;

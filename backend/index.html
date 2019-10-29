@@ -1,24 +1,105 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <script src="jquery-3.4.1.js"></script>
     <title>Hello World</title>
-</head>
-<body>
+  </head>
+  <body>
     <h1>Seafoody</h1>
-    <hr>
-    
+    <hr />
+    <form id="form">
+      <h1>Đăng nhập tài khoản</h1>
+      <label>Email: </label>
+      <input id="email" type="email" name="email" placeholder="Email của bạn" />
+      <label>Mật khẩu: </label>
+      <input
+        id="password"
+        type="password"
+        name="password"
+        placeholder="Mật khẩu"
+      />
+      <input type="submit" name="submit" />
+    </form>
+    <br />
+    <h1>Tìm kiếm tài khoản</h1>
+    <form id="searchUID">
+      <input type="number" name="id" placeholder="ID cần tìm" id="uid" />
+      <input type="submit" name="search" />
+    </form>
+    <table>
+      <thead>
+        <th>ID</th>
+        <th>Nickname</th>
+        <th>Email</th>
+        <th>Avatar</th>
+        <th>Địa chỉ</th>
+        <th>Số điện thoại</th>
+        <th>Thao tác</th>
+      </thead>
+      <tbody id="list"></tbody>
+    </table>
     <script>
-        async function getData(){
-            let response = await fetch("/users",{
-                method: "GET"
-            });
+      function renderData(fetchData) {
+        fetchData.map(item => {
+          return item.nickname;
+        });
+      }
+      async function handleDelete(element) {
+          let questions = confirm('Bạn có chắc sẽ xóa người dùng này?');
+          if(questions){
+            let response = await fetch(`/users/${element.id}`,{
+              method: "DELETE"
+          })
             let data = await response.json();
             console.log(data);
-        }
-        getData();
-        </script>
-</body>
+            alert('Xóa thành công');
+          }
+          else {
+              alert('Hủy xóa thành công!')
+          }
+      }
+
+      async function getData() {
+        let response = await fetch("/users", {
+          method: "GET"
+        });
+        let data = await response.json();
+        let template = data.doc.map(item => {
+          return `<tr>
+            <td>${item.uid}</td>
+            <td>${item.nickname}</td>
+            <td>${item.email}</td>
+            <td><img src=${item.avatarUrl} alt=${item.uid}/></td>
+            <td>${item.location}</td>
+            <td>${item.phoneNumber}</td>
+            <td><button id=${item.uid} onClick="handleDelete(this)">Xóa</button></td>
+            </tr>`;
+        });
+        document.getElementById("list").innerHTML = template.join("");
+      }
+      getData();
+
+      // Đăng nhập tài khoản
+      $("#form").on("submit", async event => {
+        event.preventDefault();
+        let email = $("#email").val();
+        let password = $("#password").val();
+        let data = { email, password };
+        let response = await fetch("/users/login", {
+          method: "POST",
+          body: JSON.stringify(data),
+          headers: {
+            "Content-Type": "application/json"
+          }
+        });
+        let responseData = await response.json();
+        console.log(JSON.stringify(data));
+        console.log(response);
+        console.log(responseData);
+      });
+    </script>
+  </body>
 </html>

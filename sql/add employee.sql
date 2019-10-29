@@ -11,7 +11,8 @@ CREATE TABLE Employee (
     constraint handle_emp 
 		primary key (empId),
         foreign key (user) references User(uid) on delete cascade ,
-        foreign key (position) references VaiTro(posId) on delete cascade
+        foreign key (position) references VaiTro(posId) on delete cascade,
+        foreign key (company) references Company(companyId) on delete cascade
 );
 INSERT INTO Employee (firstName,lastName,workingStatus,user,company,position) VALUES ('Nguyễn','Hùng','Offline',1,1,1);
 INSERT INTO Employee (firstName,lastName,workingStatus,user,company,position) VALUES ('Nguyễn','Long','Online',3,2,2);
@@ -31,7 +32,6 @@ CREATE TABLE VaiTro (
 );
 INSERT INTO VaiTro (positionName,positionDesc) VALUES ('Nhân viên','Kiểm tra đơn hàng của khách hàng, trả lời thắc mắc');
 INSERT INTO VaiTro (positionName,positionDesc) VALUES ('Quản lý','Duyệt đơn hàng, quản lý sản phẩm, thêm, sửa, xóa');
-
 
 SELECT * FROM VaiTro;
 

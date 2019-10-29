@@ -60,6 +60,7 @@ CREATE TABLE FeedbackOnProduct(
 
 ALTER TABLE feedbackonproduct modify column likes int default 0;
 
+
 CREATE TABLE FeebackOnSite(
     fosId int auto_increment not null unique,
 	fosType enum("Bao cao","Gop y"),
@@ -67,7 +68,7 @@ CREATE TABLE FeebackOnSite(
     fosText varchar(255),
 	created_at timestamp,
     primary key(fosId),
-    foreign key (user) references User(uid)
+    foreign key (user) references User(uid) 
 );
 
 
@@ -78,7 +79,8 @@ CREATE TABLE Favorites (
     product int,
     customer int,
 	primary key (favorId),
-    foreign key (customer) references User(uid),
-    foreign key (product) references Product(id)
+    foreign key (customer) references User(uid) on delete cascade,
+    foreign key (product) references Product(id) on delete cascade
 );
+
 

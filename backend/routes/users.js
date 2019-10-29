@@ -11,35 +11,59 @@ router.get("/", (req, res) => {
   });
 });
 
+router.get("/:uid", (req, res) => {
+  connection.query(
+    `SELECT * FROM user WHERE uid = ${req.params.uid}`,
+    (err, doc) => {
+      res.status(200).json({
+        data: doc
+      });
+      if (err) {
+        res.status(400).json({ err });
+        return;
+      }
+    }
+  );
+});
+
 router.post("/register", (req, res) => {
   // Find exists
+  let errors = [];
   connection.query(
     `SELECT * FROM User WHERE email = '${req.body.email}'`,
     (error, doc) => {
-      if (error) return res.status(400).json({ error });
-      if (doc.length > 0)
-        return res.status(404).json({ message: "Email đã được sử dụng" });
-        connection.end();
+      if (req.body.gender !== "Male" && req.body.gender !== "Female") {
+        errors.push("Điền sai giới tính");
+      }
+      if (doc.length > 0) {
+        errors.push("Email đã được sử dụng");
+      }
+      if (req.body.password.length < 8 || req.body.password.length > 20) {
+        errors.push(
+          "Mật khẩu phải có độ dài tối thiểu 8 ký tự và tối đa 20 ký tự"
+        );
+      }
+      bcrypt.hash(req.body.password, 10, (err, hash) => {
+        if (err) return res.status(400).json({ err });
+        const avatar = gravatar.url(req.body.email, {
+          s: 200,
+          d: "retro",
+          protocol: "http",
+          r: "pg"
+        });
+        if (errors.length > 0) {
+          return res.status(400).json({ errors });
+        } else {
+          connection.query(
+            `insert INTO User (nickname,created_at,gender,location,phoneNumber,email,avatarUrl,password) values ('${req.body.nickname}',NOW(),'${req.body.gender}','${req.body.location}','${req.body.phoneNumber}','${req.body.email}','${avatar}','${hash}');`,
+            (error, doc) => {
+              res.status(201).json({ doc, password: hash });
+            }
+          );
+        }
+      });
     }
   );
-  bcrypt.hash(req.body.password, 10, (err, hash) => {
-    if (err) return res.status(400).json({ err });
-    const avatar = gravatar.url(req.body.email, {
-      s: 200,
-      d: "retro",
-      protocol: "http",
-      r: "pg"
-    });
-    connection.query(
-      `insert INTO User (nickname,created_at,gender,location,phoneNumber,email,avatarUrl,password) values ('${req.body.nickname}',NOW(),'${req.body.gender}','${req.body.location}','${req.body.phoneNumber}','${req.body.email}','${avatar}','${hash}');`,
-      (error, doc) => {
-        if (error) {
-          res.status(400).json({ error });
-        }
-        res.status(201).json({ doc });
-      }
-    );
-  });
 });
 router.post("/login", (req, res) => {
   // Find exist
@@ -47,11 +71,18 @@ router.post("/login", (req, res) => {
     `SELECT * FROM User WHERE email = '${req.body.email}'`,
     (err, doc) => {
       if (doc.length === 0) {
-        return res.status(404).json({ message: "Không tìm thấy tài khoản" });
+        res.status(400).json({ message: "Không tìm thấy tài khoản", data: doc });
+        return;
       }
-      if (err) return res.status(400).json({ err });
-      bcrypt.compare(req.body.password, doc.password, err => {
-        if (err) res.status(403).json({ error: "Sai mật khẩu", error: err });
+      bcrypt.compare(req.body.password, doc[0].password, (err, done) => {
+        if (err) {
+          res.status(403).json({
+            error: err,
+            status: 403,
+            message: "Sai mật khẩu"
+          });
+          return;
+        }
         const token = jwt.sign(
           {
             id: doc.uid,
@@ -63,10 +94,26 @@ router.post("/login", (req, res) => {
             expiresIn: "1h"
           }
         );
-        return res.status(200).json({
+        res.status(200).json({
           message: "Logged in",
           headers: `Bearer ${token}`
         });
+      });
+    }
+  );
+});
+
+router.delete("/:uid", (req, res) => {
+  connection.query(
+    `DELETE FROM User WHERE uid = ${req.params.uid}`,
+    (err, doc) => {
+      if (err) {
+        res.status(400).json({ err });
+        return;
+      }
+      return res.status(200).json({
+        response: doc,
+        message: "Delete successful"
       });
     }
   );
