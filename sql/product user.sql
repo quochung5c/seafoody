@@ -72,6 +72,7 @@ CREATE TABLE FeebackOnSite(
 
 
 -- Favorites for products
+DROP TABLE Favorites;
 CREATE TABLE Favorites (
     favorId int auto_increment not null unique,
     product int,

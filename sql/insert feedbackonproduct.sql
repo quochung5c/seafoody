@@ -37,15 +37,15 @@ INSERT INTO Favorites(product,customer) VALUES (1,1);
 UPDATE Product SET likes = likes + 1 WHERE id = 1;
 
 INSERT INTO Favorites(product,customer) VALUES (1,2);
-UPDATE Product SET likes = likes + 1 WHERE id = 2;
+UPDATE Product SET likes = likes + 1 WHERE id = 1;
 
 INSERT INTO Favorites(product,customer) VALUES (2,3);
-UPDATE Product SET likes = likes + 1 WHERE id = 3;
+UPDATE Product SET likes = likes + 1 WHERE id = 2;
 
 INSERT INTO Favorites(product,customer) VALUES (3,3);
 UPDATE Product SET likes = likes + 1 WHERE id = 3;
 
-SELECT * FROM Favorites;
+SELECT  * FROM Favorites;
 SELECT * FROM product;
 
 

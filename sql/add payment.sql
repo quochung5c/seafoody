@@ -32,13 +32,15 @@ CREATE TABLE Product_HoaDon(
     foreign key (product) references Product(id)
 );
 
-
+DROP TABLE Payment;
 CREATE TABLE Payment(
 	creditNum varchar(255) unique not null,
     user int,
     expireDate date,
     amount numeric(19,0),
-    foreign key (user) references User(uid),
-    primary key (creditNum)
+    foreign key (user) references User(uid)
 );
-
+ALTER TABLE hoadon ADD creditCard varchar(255);
+ALTER TABLE hoadon ADD constraint handle_creditCard
+	foreign key (creditCard) references Payment(creditNum);
+SELECT * FROM hoadon;

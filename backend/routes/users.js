@@ -11,9 +11,6 @@ router.get("/", (req, res) => {
   });
 });
 
-<<<<<<< HEAD
-
-=======
 router.post("/register", (req, res) => {
   // Find exists
   connection.query(
@@ -74,6 +71,5 @@ router.post("/login", (req, res) => {
     }
   );
 });
->>>>>>> 8ec01ba8d602ed0b380dc4ff1e076f40026d3822
 
 module.exports = router;
