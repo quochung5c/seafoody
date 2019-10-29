@@ -1,3 +1,4 @@
+
 -- INSERT Feedback on Product
 select * from feedbackonproduct;
 ALTER TABLE feedbackonproduct modify column created_at timestamp default now();
@@ -58,17 +59,10 @@ CREATE TABLE FeedbackType (
     feebackText varchar(100),
     typeDesc varchar(255)
 );
+SELECT * FROM FeedbackType;
 INSERT INTO FeedbackType VALUES (101,'Báo cáo','Báo cáo những sai sót trong quá trình sử dụng');
 INSERT INTO FeedbackType VALUES (102,'Góp ý', 'Đề xuất trong việc phát triển, sản xuất');
 INSERT INTO FeedbackType VALUES (103,'Khác','Đánh giá khác liên quan đến sản phẩm');
 
-ALTER TABLE feebackonsite DROP COLUMN fosType;
-ALTER TABLE feedbackonproduct DROP COLUMN fopType;
-
-ALTER TABLE feebackonsite ADD fbType int;
-ALTER TABLE feebackonsite ADD foreign key (fbType) references FeedbackType(typeId) on delete cascade;
-
-ALTER TABLE feedbackonproduct ADD fbType int;
-ALTER TABLE feedbackonproduct ADD foreign key (fbType) references FeedbackType(typeId) on delete cascade;
 
 SELECT * FROM feedbackonproduct;

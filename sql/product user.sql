@@ -45,30 +45,32 @@ CREATE TABLE Product(
     foreign key (promotion) references Promotion(promotionId)
 );
 
+DROP TABLE FeedbackOnProduct;
+DROP TABLE feebackonsite;
 
 CREATE TABLE FeedbackOnProduct(
     fopId int auto_increment not null unique,
     user int,
     product int,
     fopText varchar(255),
-    likes int,
+    likes int default 0,
+    genre int,
     primary key (fopId),
 	created_at timestamp,
-    foreign key (user) references User(uid),
-    foreign key (product) references Product(id)
+    foreign key (user) references User(uid) on delete cascade,
+    foreign key (product) references Product(id) on delete cascade,
+    foreign key (genre) references FeedbackType(typeId) on delete set null
 );
-
-ALTER TABLE feedbackonproduct modify column likes int default 0;
-
 
 CREATE TABLE FeebackOnSite(
     fosId int auto_increment not null unique,
-	fosType enum("Bao cao","Gop y"),
+	genre int,
     user int,
     fosText varchar(255),
 	created_at timestamp,
     primary key(fosId),
-    foreign key (user) references User(uid) 
+    foreign key (user) references User(uid) on delete cascade,
+    foreign key (genre) references FeedbackType(typeId) on delete set null
 );
 
 
