@@ -8,23 +8,109 @@
     <title>Hello World</title>
   </head>
   <body>
-    <h1>Seafoody</h1>
+    <h1>Trình quản lý dữ liệu Seafoody</h1>
     <hr />
-    <form id="form">
-      <h1>Đăng nhập tài khoản</h1>
-      <label>Email: </label>
-      <input id="email" type="email" name="email" placeholder="Email của bạn" />
-      <label>Mật khẩu: </label>
-      <input
-        id="password"
-        type="password"
-        name="password"
-        placeholder="Mật khẩu"
-      />
-      <input type="submit" name="submit" />
-    </form>
+    <h2 style="color: red">1. Quản lý người dùng</h2>
+    <div class="verifyUser" style="display:flex; justify-content: space-around;">
+      <div class="loginUser">
+        <form id="form">
+          <h4>Đăng nhập tài khoản</h4>
+          <label>Email: </label>
+          <input
+            id="email"
+            type="email"
+            name="email"
+            placeholder="Email của bạn"
+          />
+          <label>Mật khẩu: </label>
+          <input
+            id="password"
+            type="password"
+            name="password"
+            placeholder="Mật khẩu"
+          />
+          <input type="submit" name="submit" />
+        </form>
+      </div>
+      <div class="registerUser">
+        <form id="register">
+          <table>
+            <h4>Đăng ký tài khoản</h4>
+            <tr>
+              <td><label>Nickname: </label></td>
+              <td>
+                <input
+                  type="text"
+                  id="newNickname"
+                  name="nickname"
+                  placeholder="Tên người dùng"
+                />
+              </td>
+            </tr>
+            <tr>
+              <td><label>Email: </label></td>
+              <td>
+                <input
+                  id="newEmail"
+                  type="email"
+                  name="email"
+                  placeholder="Email của bạn"
+                />
+              </td>
+            </tr>
+            <tr>
+              <td><label>Số điện thoại</label></td>
+              <td>
+                <input
+                  type="text"
+                  id="newPhone"
+                  name="phoneNumber"
+                  placeholder="Số điện thoại"
+                />
+              </td>
+            </tr>
+            <tr>
+              <td><label>Địa chỉ</label></td>
+              <td>
+                <input
+                  type="text"
+                  id="newCity"
+                  name="location"
+                  placeholder="Địa chỉ của bạn"
+                />
+              </td>
+            </tr>
+            <tr>
+              <td><label>Mật khẩu: </label></td>
+              <td>
+                <input
+                  id="newPassword"
+                  type="password"
+                  name="password"
+                  placeholder="Mật khẩu"
+                />
+              </td>
+            </tr>
+            <tr>
+              <td><label>Nhập lại mật khẩu: </label></td>
+              <td>
+                <input
+                  id="rePassword"
+                  type="password"
+                  name="password"
+                  placeholder="Mật khẩu"
+                />
+              </td>
+            </tr>
+          </table>
+
+          <input type="submit" name="submit" />
+        </form>
+      </div>
+    </div>
+
     <br />
-    <h1>Tìm kiếm tài khoản</h1>
+    <h4>Tìm kiếm tài khoản</h4>
     <form id="searchUID">
       <input type="number" name="id" placeholder="ID cần tìm" id="uid" />
       <input type="submit" name="search" />
@@ -42,27 +128,22 @@
       <tbody id="list"></tbody>
     </table>
     <script>
-      function renderData(fetchData) {
-        fetchData.map(item => {
-          return item.nickname;
-        });
-      }
       async function handleDelete(element) {
-          let questions = confirm('Bạn có chắc sẽ xóa người dùng này?');
-          if(questions){
-            let response = await fetch(`/users/${element.id}`,{
-              method: "DELETE"
-          })
-            let data = await response.json();
-            console.log(data);
-            alert('Xóa thành công');
-          }
-          else {
-              alert('Hủy xóa thành công!')
-          }
+        let questions = confirm("Bạn có chắc sẽ xóa người dùng này?");
+        if (questions) {
+          let response = await fetch(`/users/${element.id}`, {
+            method: "DELETE"
+          });
+          let data = await response.json();
+          console.log(data);
+          alert("Xóa thành công");
+          window.location.reload();
+        } else {
+          alert("Hủy xóa thành công!");
+        }
       }
 
-      async function getData() {
+      async function getUser() {
         let response = await fetch("/users", {
           method: "GET"
         });
@@ -80,7 +161,30 @@
         });
         document.getElementById("list").innerHTML = template.join("");
       }
-      getData();
+      getUser();
+
+      $("#searchUID").on("submit", async event => {
+        event.preventDefault();
+        console.log($("#uid").val());
+        let uid = $("#uid").val();
+        let response = await fetch(`/users/${uid}`, {
+          method: "GET"
+        });
+        let data = await response.json();
+        console.log(data.data);
+        let template = data.data.map(item => {
+          return `<tr>
+            <td>${item.uid}</td>
+            <td>${item.nickname}</td>
+            <td>${item.email}</td>
+            <td><img src=${item.avatarUrl} alt=${item.uid}/></td>
+            <td>${item.location}</td>
+            <td>${item.phoneNumber}</td>
+            <td><button id=${item.uid} onClick="handleDelete(this)">Xóa</button></td>
+            </tr>`;
+        });
+        document.getElementById("list").innerHTML = template.join("");
+      });
 
       // Đăng nhập tài khoản
       $("#form").on("submit", async event => {
