@@ -3,10 +3,26 @@ const gravatar = require("gravatar");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const connection = require("../connection");
+const moment = require("moment");
+
+moment.locale("vi");
 
 router.get("/", (req, res) => {
   connection.query("SELECT * FROM user", (err, doc) => {
-    res.status(200).json({ doc });
+    res.status(200).json({
+      data: doc.map(item => {
+        return {
+          nickname: item.nickname,
+          phoneNumber: item.phoneNumber,
+          id: item.uid,
+          gender: item.gender,
+          avatar: item.avatarUrl,
+          location: item.location,
+          created_at: moment(item.created_at).format("LLLL"),
+          email: item.email
+        };
+      })
+    });
     if (err) res.status(400).json({ err });
   });
 });
@@ -16,7 +32,18 @@ router.get("/:uid", (req, res) => {
     `SELECT * FROM user WHERE uid = ${req.params.uid}`,
     (err, doc) => {
       res.status(200).json({
-        data: doc
+        data: doc.map(item => {
+          return {
+            nickname: item.nickname,
+            phoneNumber: item.phoneNumber,
+            id: item.uid,
+            gender: item.gender,
+            avatar: item.avatarUrl,
+            location: item.location,
+            created_at: moment(item.created_at).format("LLLL"),
+            email: item.email
+          };
+        })
       });
       if (err) {
         res.status(400).json({ err });
@@ -71,7 +98,9 @@ router.post("/login", (req, res) => {
     `SELECT * FROM User WHERE email = '${req.body.email}'`,
     (err, doc) => {
       if (doc.length === 0) {
-        res.status(400).json({ message: "Không tìm thấy tài khoản", data: doc });
+        res
+          .status(400)
+          .json({ message: "Không tìm thấy tài khoản", data: doc });
         return;
       }
       bcrypt.compare(req.body.password, doc[0].password, (err, done) => {

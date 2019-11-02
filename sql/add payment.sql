@@ -42,5 +42,5 @@ CREATE TABLE Payment(
 );
 ALTER TABLE hoadon ADD creditCard varchar(255);
 ALTER TABLE hoadon ADD constraint handle_creditCard
-	foreign key (creditCard) references Payment(creditNum);
+	foreign key (creditCard) references Payment(creditNum); 
 SELECT * FROM hoadon;
