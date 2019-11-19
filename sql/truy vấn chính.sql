@@ -56,3 +56,51 @@ SELECT product.*, productimage.imageUrl FROM (((Favorites
 -- Sửa đơn vị cho các sản phẩm
 SELECT * FROM Product;
 UPDATE Product SET pricePerRatio = 'kg' WHERE id = 2 OR id = 3;
+
+SELECT * FROM User WHERE nickname LIKE '%hu%';
+
+SELECT product.productName, product.id, product.price, product.productType, product.posted_at, product.description, product.pricePerRatio,
+  company.companyName, company.companyId,
+  promotion.promocode, promotion.promotionId, 
+  employee.firstName, employee.lastName FROM (((Product 
+    INNER JOIN company ON product.id = company.companyId)
+      INNER JOIN promotion ON product.promotion = promotion.promotionId)
+      INNER JOIN employee ON product.employee = employee.empId);
+      
+SELECT product.id, product.productName, product.price, product.productType, product.likes, promotion.promoPercent, product.posted_at, product.description, product.pricePerRatio, company.companyName, product.company, promotion.promocode, employee.firstName, employee.lastName FROM (((Product 
+        INNER JOIN Company ON product.company = company.companyId)
+          INNER JOIN promotion ON product.promotion = promotion.promotionId)
+          INNER JOIN employee ON product.employee = employee.empId);
+          
+SELECT * FROM company;
+
+-- Hiển thị thông tin toàn bộ của 1 công ty bao gồm số lượng nhân viên, các thông tin bên lề.
+SELECT employee.company, COUNT(empId) AS NumberOfEmp, company.location, company.companyName, company.phoneNumber FROM employee 
+     INNER JOIN Company ON employee.company = company.companyId group by company;
+
+-- Hiển thị thông tin của từng nhân viên trong 1 công ty bất kỳ và vai trò bất kỳ
+SELECT employee.empId as id, employee.firstName, employee.lastName, employee.workingStatus, employee.created_at, user.email, user.phoneNumber, user.location, vaitro.positionName FROM ((Employee
+	INNER JOIN User ON employee.user = user.uid)
+    INNER JOIN vaitro ON employee.position = vaitro.posId)
+    where employee.company = 1 AND vaitro.positionName = "Nhân viên";
+
+-- Hiển thị danh sách nhân viên trong DB
+SELECT employee.empId as id, employee.firstName, employee.lastName, employee.workingStatus, employee.created_at, user.email, user.phoneNumber, user.location, vaitro.positionName FROM ((Employee
+	INNER JOIN User ON employee.user = user.uid)
+    INNER JOIN vaitro ON employee.position = vaitro.posId);
+    
+-- Hiển thị thông tin của 1 employee
+SELECT employee.empId as id, employee.firstName, employee.lastName, employee.workingStatus, employee.created_at, user.email, user.phoneNumber, user.location, user.avatarUrl, vaitro.positionName FROM ((Employee
+	INNER JOIN User ON employee.user = user.uid)
+    INNER JOIN vaitro ON employee.position = vaitro.posId)
+WHERE empId = 1;
+
+-- Hiển thị thông tin của 1 công ty
+SELECT * FROM Company;
+
+-- Hiển thị thông tin tài khoản + thẻ ngân hàng
+SELECT user.nickname, user.email, user.phoneNumber, payment.* FROM Payment
+	INNER JOIN User ON payment.user = user.uid;
+    
+
+

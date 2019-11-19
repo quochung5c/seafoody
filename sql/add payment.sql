@@ -44,3 +44,15 @@ ALTER TABLE hoadon ADD creditCard varchar(255);
 ALTER TABLE hoadon ADD constraint handle_creditCard
 	foreign key (creditCard) references Payment(creditNum); 
 SELECT * FROM hoadon;
+
+ALTER TABLE HoaDon DROP COLUMN sumPrice;
+ALTER TABLE product_hoadon drop column price;
+
+SELECT * FROM Payment;
+
+SELECT * FROM hoadon;
+SELECT hoadon.id, hoadon.shipping_address, hoadon.payment_method, hoadon.shipping_time, hoadon.comments, user.nickname, user.email, orderstatus.statusText, payment.amount, payment.creditNum FROM HoaDon 
+	inner join user on hoadon.customer = user.uid
+    inner join orderstatus on hoadon.statusCode = orderstatus.statusCode
+    inner join payment on hoadon.creditCard = payment.creditNum
+WHERE id = 1;

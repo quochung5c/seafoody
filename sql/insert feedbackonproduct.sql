@@ -45,7 +45,15 @@ UPDATE Product SET likes = likes + 1 WHERE id = 2;
 INSERT INTO Favorites(product,customer) VALUES (3,3);
 UPDATE Product SET likes = likes + 1 WHERE id = 3;
 
-SELECT  * FROM Favorites;
+
+INSERT INTO Favorites(product,customer) VALUES (4,2);
+UPDATE Product SET likes = likes + 1 WHERE id = 4;
+
+SELECT product.nickname, user.email FROM Favorites
+	INNER JOIN Product ON favorites.product = product.id
+    INNER JOIN User ON favorites.customer = user.uid
+WHERE product.id = 1;
+
 SELECT * FROM product;
 
 -- Edit feedback on product and on site
@@ -59,6 +67,7 @@ CREATE TABLE FeedbackType (
     feebackText varchar(100),
     typeDesc varchar(255)
 );
+
 SELECT * FROM FeedbackType;
 INSERT INTO FeedbackType VALUES (101,'Báo cáo','Báo cáo những sai sót trong quá trình sử dụng');
 INSERT INTO FeedbackType VALUES (102,'Góp ý', 'Đề xuất trong việc phát triển, sản xuất');
@@ -66,3 +75,5 @@ INSERT INTO FeedbackType VALUES (103,'Khác','Đánh giá khác liên quan đế
 
 
 SELECT * FROM feedbackonproduct;
+
+SELECT * FROM orderstatus;

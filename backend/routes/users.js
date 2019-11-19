@@ -53,6 +53,133 @@ router.get("/:uid", (req, res) => {
   );
 });
 
+
+router.get("/gender/:gender", (req, res) => {
+  connection.query(
+    `SELECT * FROM User WHERE gender = '${req.params.gender}';`,
+    (error, doc) => {
+      if (error) {
+        res.status(400).json({ error });
+        return;
+      }
+      res.status(200).json({
+        data: doc.map(item => {
+          return {
+            nickname: item.nickname,
+            phoneNumber: item.phoneNumber,
+            id: item.uid,
+            gender: item.gender,
+            avatar: item.avatarUrl,
+            location: item.location,
+            created_at: moment(item.created_at).format("LLLL"),
+            email: item.email
+          };
+        })
+      });
+    }
+  );
+});
+
+router.get("/searchByName/:name", (req, res) => {
+  connection.query(
+    `SELECT * FROM User WHERE nickname LIKE '%${req.params.name}%'`,
+    (error, doc) => {
+      if (error) {
+        res.status(400).json({ error });
+        return;
+      }
+      res.status(200).json({
+        data: doc.map(item => {
+          return {
+            nickname: item.nickname,
+            phoneNumber: item.phoneNumber,
+            id: item.uid,
+            gender: item.gender,
+            avatar: item.avatarUrl,
+            location: item.location,
+            created_at: moment(item.created_at).format("LLLL"),
+            email: item.email
+          };
+        })
+      });
+    }
+  );
+});
+
+router.get("/searchByEmail/:email", (req, res) => {
+  connection.query(
+    `SELECT * FROM User WHERE email LIKE '%${req.params.email}%'`,
+    (error, doc) => {
+      if (error) {
+        res.status(400).json({ error });
+        return;
+      }
+      res.status(200).json({
+        data: doc.map(item => {
+          return {
+            nickname: item.nickname,
+            phoneNumber: item.phoneNumber,
+            id: item.uid,
+            gender: item.gender,
+            avatar: item.avatarUrl,
+            location: item.location,
+            created_at: moment(item.created_at).format("LLLL"),
+            email: item.email
+          };
+        })
+      });
+    }
+  );
+});
+
+router.get("/orderByName/ascending", (req, res) => {
+  connection.query(`SELECT * FROM User ORDER BY nickname`, (error, doc) => {
+    if (error) {
+      res.status(400).json({ error });
+      return;
+    }
+    res.status(200).json({
+      data: doc.map(item => {
+        return {
+          nickname: item.nickname,
+          phoneNumber: item.phoneNumber,
+          id: item.uid,
+          gender: item.gender,
+          avatar: item.avatarUrl,
+          location: item.location,
+          created_at: moment(item.created_at).format("LLLL"),
+          email: item.email
+        };
+      })
+    });
+  });
+});
+
+router.get("/orderByName/descending", (req, res) => {
+  connection.query(`SELECT * FROM User ORDER BY nickname DESC`, (error, doc) => {
+    if (error) {
+      res.status(400).json({ error });
+      return;
+    }
+    res.status(200).json({
+      data: doc.map(item => {
+        return {
+          nickname: item.nickname,
+          phoneNumber: item.phoneNumber,
+          id: item.uid,
+          gender: item.gender,
+          avatar: item.avatarUrl,
+          location: item.location,
+          created_at: moment(item.created_at).format("LLLL"),
+          email: item.email
+        };
+      })
+    });
+  });
+});
+
+router.patch("/:id", (req, res) => {});
+
 router.post("/register", (req, res) => {
   // Find exists
   let errors = [];
@@ -125,7 +252,8 @@ router.post("/login", (req, res) => {
         );
         res.status(200).json({
           message: "Logged in",
-          headers: `Bearer ${token}`
+          headers: `Bearer ${token}`,
+          data: doc
         });
       });
     }

@@ -35,7 +35,7 @@ const upload = multer({
 
 router.get("/", (req, res) => {
   connection.query(
-    `SELECT product.id, product.productName, product.price, product.productType, promotion.promoPercent, product.posted_at, product.description, product.pricePerRatio, company.companyName, product.company, promotion.promocode, employee.firstName, employee.lastName FROM (((Product 
+    `SELECT product.id, product.productName, product.price, product.likes, product.productType, promotion.promoPercent, product.posted_at, product.description, product.pricePerRatio, company.companyName, product.company, promotion.promocode, employee.firstName, employee.lastName FROM (((Product 
         INNER JOIN Company ON product.company = company.companyId)
           INNER JOIN promotion ON product.promotion = promotion.promotionId)
           INNER JOIN employee ON product.employee = employee.empId);`,
@@ -72,13 +72,10 @@ router.get("/", (req, res) => {
 
 router.get("/searchById/:id", (req, res) => {
   connection.query(
-    `SELECT product.productName, product.id, product.price, product.productType, product.posted_at, product.description, product.pricePerRatio,
-  company.companyName, company.companyId,
-  promotion.promocode, promotion.promotionId, 
-  employee.firstName, employee.lastName FROM (((Product 
-    INNER JOIN company ON product.id = company.companyId)
-      INNER JOIN promotion ON product.promotion = promotion.promotionId)
-      INNER JOIN employee ON product.employee = employee.empId) WHERE id = ${req.params.id}`,
+    `SELECT product.id, product.productName, product.price, product.productType, product.likes,promotion.promoPercent, product.posted_at, product.description, product.pricePerRatio, company.companyName, product.company, promotion.promocode, employee.firstName, employee.lastName FROM (((Product 
+      INNER JOIN Company ON product.company = company.companyId)
+        INNER JOIN promotion ON product.promotion = promotion.promotionId)
+        INNER JOIN employee ON product.employee = employee.empId) WHERE id = ${req.params.id}`,
     (err, doc) => {
       res.status(200).json({
         counts: doc.length,
@@ -107,13 +104,10 @@ router.get("/searchById/:id", (req, res) => {
 
 router.get("/searchByName/:name", (req, res) => {
   connection.query(
-    `SELECT product.productName, product.id, product.price, product.productType, product.posted_at, product.description, product.pricePerRatio,
-  company.companyName, company.companyId,
-  promotion.promocode, promotion.promotionId, 
-  employee.firstName, employee.lastName FROM (((Product 
-    INNER JOIN company ON product.id = company.companyId)
-      INNER JOIN promotion ON product.promotion = promotion.promotionId)
-      INNER JOIN employee ON product.employee = employee.empId) WHERE product.productName LIKE '%${req.params.name}%';`,
+    `SELECT product.id, product.productName, product.price, product.productType,product.likes, promotion.promoPercent, product.posted_at, product.description, product.pricePerRatio, company.companyName, product.company, promotion.promocode, employee.firstName, employee.lastName FROM (((Product 
+      INNER JOIN Company ON product.company = company.companyId)
+        INNER JOIN promotion ON product.promotion = promotion.promotionId)
+        INNER JOIN employee ON product.employee = employee.empId) WHERE product.productName LIKE '%${req.params.name}%';`,
     (err, doc) => {
       res.status(200).json({
         counts: doc.length,
@@ -139,48 +133,16 @@ router.get("/searchByName/:name", (req, res) => {
     }
   );
 });
-// Upload sản phẩm
-router.post("/", upload.single("product"), (req, res) => {
-  // Validate employee
-  connection.query(
-    `SELECT Employee.*, company.companyName FROM Employee INNER JOIN Company ON employee.company = company.companyId WHERE user = ${req.body.user}`,
-    (error, doc) => {
-      if (doc.length === 0) {
-        res.status(403).json({ message: "Not found" });
-        return;
-      } else {
-        console.log(doc[0].empId, doc[0].company);
-        connection.query(
-          `INSERT INTO Product (productName,price,productType,posted_at,company,description,promotion,pricePerRatio,productImg,employee) VALUES (
-          '${req.body.productName}',${req.body.price},'${req.body.productType}',NOW(),${doc[0].company},'${req.body.description}',${req.body.promotion},'${req.body.pricePerRatio}',${req.body.productImg},${doc[0].empId}
-        );`,
-          (err, response) => {
-            if (err) {
-              res.status(400).json({ err });
-              return;
-            }
-            res.status(200).json({ response });
-          }
-        );
-      }
 
-      if (error) {
-        res.status(400).json({ error });
-        return;
-      }
-    }
-  );
-});
-
-router.get("/favorites/:id", (req, res) => {
+router.get("/orderByPrice/ascending", (req, res) => {
   connection.query(
-    `SELECT product.*, productimage.imageUrl FROM (((Favorites
-         JOIN User ON favorites.customer = user.uid)
-         JOIN Product ON favorites.product = product.id)
-         JOIN productimage ON favorites.product = productimage.product)
-     WHERE favorites.customer = ${req.params.id} AND productimage.featureIn = 1;`,
+    `SELECT product.id, product.productName, product.price, product.productType, product.likes,promotion.promoPercent, product.posted_at, product.description, product.pricePerRatio, company.companyName, product.company, promotion.promocode, employee.firstName, employee.lastName FROM (((Product 
+      INNER JOIN Company ON product.company = company.companyId)
+        INNER JOIN promotion ON product.promotion = promotion.promotionId)
+        INNER JOIN employee ON product.employee = employee.empId) ORDER BY product.price;`,
     (err, doc) => {
       res.status(200).json({
+        counts: doc.length,
         data: doc.map(item => {
           return {
             id: item.id,
@@ -195,11 +157,175 @@ router.get("/favorites/:id", (req, res) => {
             employee: `${item.firstName} ` + `${item.lastName}`,
             likes: item.likes,
             created_at: moment(item.posted_at).format("LLLL"),
-            description: item.descriptionF
+            description: item.description
           };
         })
       });
       if (err) res.status(400).json({ err });
+    }
+  );
+});
+
+router.get("/orderByPrice/descending", (req, res) => {
+  connection.query(
+    `SELECT product.id, product.productName, product.price, product.productType,  product.likes, promotion.promoPercent, product.posted_at, product.description, product.pricePerRatio, company.companyName, product.company, promotion.promocode, employee.firstName, employee.lastName FROM (((Product 
+      INNER JOIN Company ON product.company = company.companyId)
+        INNER JOIN promotion ON product.promotion = promotion.promotionId)
+        INNER JOIN employee ON product.employee = employee.empId) ORDER BY product.price DESC;`,
+    (err, doc) => {
+      res.status(200).json({
+        counts: doc.length,
+        data: doc.map(item => {
+          return {
+            id: item.id,
+            employee_id: item.empId,
+            company_id: item.companyId,
+            name: item.productName,
+            type: item.productType,
+            price: `${item.price}/${item.pricePerRatio}`,
+            promotion: item.promotion,
+            company: item.companyName,
+            promotion: item.promocode,
+            employee: `${item.firstName} ` + `${item.lastName}`,
+            likes: item.likes,
+            created_at: moment(item.posted_at).format("LLLL"),
+            description: item.description
+          };
+        })
+      });
+      if (err) res.status(400).json({ err });
+    }
+  );
+});
+
+router.get("/filterBy/:genre", (req, res) => {
+  connection.query(
+    `SELECT product.id, product.productName, product.price, product.productType,  product.likes, promotion.promoPercent, product.posted_at, product.description, product.pricePerRatio, company.companyName, product.company, promotion.promocode, employee.firstName, employee.lastName FROM (((Product 
+    INNER JOIN Company ON product.company = company.companyId)
+      INNER JOIN promotion ON product.promotion = promotion.promotionId)
+      INNER JOIN employee ON product.employee = employee.empId) WHERE productType = '${req.params.genre}';`,
+    (req, doc) => {
+      res.status(200).json({
+        counts: doc.length,
+        data: doc.map(item => {
+          return {
+            id: item.id,
+            employee_id: item.empId,
+            company_id: item.companyId,
+            name: item.productName,
+            type: item.productType,
+            price: `${item.price}/${item.pricePerRatio}`,
+            promotion: item.promotion,
+            company: item.companyName,
+            promotion: item.promocode,
+            employee: `${item.firstName} ` + `${item.lastName}`,
+            likes: item.likes,
+            created_at: moment(item.posted_at).format("LLLL"),
+            description: item.description
+          };
+        })
+      });
+      if (err) res.status(400).json({ err });
+    }
+  );
+});
+
+// Lấy promotion
+router.get("/promotion", (req, res) => {
+  connection.query("SELECT * FROM Promotion", (error, doc) => {
+    if (error) {
+      res.status(400).json({ error });
+      return;
+    }
+    res.status(200).json({
+      data: doc.map(item => {
+        return {
+          id: item.promotionId,
+          code: item.promocode,
+          percent: item.promoPercent,
+          expired: moment(item.expiredDate).format("LLLL"),
+          description: item.promoDescription
+        };
+      })
+    });
+  });
+});
+
+// Upload sản phẩm
+// Mã user, tên sản phẩm, giá sản phẩm, loại sản phẩm, mô tả sản phẩm, mã khuyến mãi, định lượng giá, hình ảnh
+router.post("/", upload.single("product"), (req, res) => {
+  cloudinary.uploader
+    .upload(req.file.path, { resource_type: "image" })
+    .then(document => {
+      connection.query(
+        `SELECT Employee.*, company.companyName FROM Employee INNER JOIN Company ON employee.company = company.companyId WHERE user = ${req.body.user}`,
+        (error, doc) => {
+          if (doc.length === 0) {
+            res.status(403).json({ message: "Not found" });
+            return;
+          } else {
+            console.log(document.secure_url);
+            connection.query(
+              `INSERT INTO Product (productName,price,productType,posted_at,company,description,promotion,pricePerRatio,imageUrl,employee) VALUES (
+          '${req.body.productName}',${req.body.price},'${req.body.productType}',NOW(),${doc[0].company},'${req.body.description}',${req.body.promotion},'${req.body.pricePerRatio}','${document.secure_url}',${doc[0].empId}
+        );`,
+              (err, response) => {
+                if (err) {
+                  res.status(400).json({ err });
+                  return;
+                }
+                res.status(200).json({ response });
+              }
+            );
+          }
+
+          if (error) {
+            res.status(400).json({ error });
+            return;
+          }
+        }
+      );
+    });
+});
+
+router.get("/favorites/:product", (req, res) => {
+  connection.query(
+    `SELECT user.nickname, user.email FROM Favorites
+    INNER JOIN Product ON favorites.product = product.id
+      INNER JOIN User ON favorites.customer = user.uid
+  WHERE product.id = ${req.params.product};`,
+    (err, doc) => {
+      res.status(200).json({
+        data: doc
+      });
+      if (err) res.status(400).json({ err });
+    }
+  );
+});
+
+router.patch("/likes/:product", (req, res) => {
+  connection.query(
+    `INSERT INTO Favorites(product,customer) VALUES (${req.params.product},${req.body.user}); 
+    UPDATE Product SET likes = likes + 1 WHERE id = ${req.params.product};`,
+    (error, response) => {
+      if (error) {
+        res.status(400).json({ error });
+        return;
+      }
+      res.status(201).json({ response });
+    }
+  );
+});
+
+router.delete("/:product", (req, res) => {
+  connection.query(
+    `DELETE FROM Product WHERE id = ${req.params.product}`,
+    (error, response) => {
+      if (error) {
+        res.status(400).json({ error });
+        return;
+      }
+      res.status(200).json({ response });
     }
   );
 });

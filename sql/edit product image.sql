@@ -31,13 +31,13 @@ employee.firstName, employee.lastName FROM (((Product
 	INNER JOIN company ON product.id = company.companyId)
     INNER JOIN promotion ON product.promotion = promotion.promotionId)
     INNER JOIN employee ON product.employee = employee.empId);
-    
+      
 SELECT product.productName, product.id, product.price, product.productType, product.posted_at, product.description, product.pricePerRatio,
 company.companyName, company.companyId,
 promotion.promocode, promotion.promotionId, 
 employee.firstName, employee.lastName FROM (((Product 
 	INNER JOIN company ON product.id = company.companyId)
-    INNER JOIN promotion ON product.promotion = promotion.promotionId)
+    INNER JOIN promotion ON product.promotion = promotion.promotionId)     
     INNER JOIN employee ON product.employee = employee.empId) WHERE product.id = 1;
     
 -- Tìm kiếm theo product Name

@@ -1,7 +1,7 @@
 SELECT * FROM Product;
 ALTER TABLE Product ADD pricePerRatio enum('kg','g','chiếc','con');
-INSERT INTO Product (productName,price,productType,posted_at,company,description,promotion,likes) VALUES (
-	'Cá thu Hạ Long',250.000,'Tuoi song',NOW(),1,'Ca thu rat ngon va tuoi song',null,0
+INSERT INTO Product (productName,price,productType,posted_at,company,description,promotion,pricePerRatio,productImg,employee) VALUES (
+	'Cá thu Hạ Long',250.000,'Tuoi song',NOW(),1,'Ca thu rat ngon va tuoi song',3,1,2
 );
 update Product set pricePerRatio = 'kg' WHERE NOT id = 1;
 update Product set price = 250000 WHERE id = 1;
@@ -19,3 +19,9 @@ UPDATE Product set price = 140000 WHERE id = 2;
 update Product set price = 250000 where id = 3;
 
 UPDATE Product SET likes = 0;
+
+
+SELECT Employee.*, company.companyName FROM Employee INNER JOIN Company ON employee.company = company.companyId WHERE user = 2;
+
+INSERT INTO Product (productName,price,productType,posted_at,company,description,promotion,pricePerRatio,productImg,employee) VALUES ('Chả mực Hạ Long',40000,'Dong lanh',NOW(),3,'Chả mực tuyệt ngon, thật hấp dẫn','kg',3,3);
+
