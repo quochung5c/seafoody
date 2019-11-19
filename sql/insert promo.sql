@@ -14,3 +14,4 @@ insert INTO Promotion values (2,
 'giảm 10% đồ hải sản khô');
 
 insert into promotion values(0,'NULL',0,'2023-1-1','');
+

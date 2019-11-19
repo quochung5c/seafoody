@@ -25,3 +25,17 @@ SELECT Employee.*, company.companyName FROM Employee INNER JOIN Company ON emplo
 
 INSERT INTO Product (productName,price,productType,posted_at,company,description,promotion,pricePerRatio,productImg,employee) VALUES ('Chả mực Hạ Long',40000,'Dong lanh',NOW(),3,'Chả mực tuyệt ngon, thật hấp dẫn','kg',3,3);
 
+ALTER TABLE Product
+DROP FOREIGN KEY new_product_image;
+
+ALTER TABLE feedbackonproduct 
+DROP FOREIGN KEY feedbackonproduct_ibfk_2;
+
+ALTER TABLE product_hoadon 
+DROP FOREIGN KEY product_hoadon_ibfk_2;
+
+ALTER TABLE Product ADD COLUMN imageUrl varchar(255);
+
+DROP TABLE product_image;
+DROP TABLE productimage;
+

@@ -85,4 +85,4 @@ CREATE TABLE Favorites (
     foreign key (product) references Product(id) on delete cascade
 );
 
-
+SELECT * FROM Product;
