@@ -13,7 +13,7 @@ import TextField from "@material-ui/core/TextField";
 
 import Button from "@material-ui/core/Button";
 
-const CompanyEmp = ({ employee, company , handleChange }) => {
+const CompanyEmp = ({ employee, company, handleChange }) => {
   const [open, setOpen] = React.useState(false);
 
   const handleClickOpen = () => {
@@ -53,16 +53,19 @@ const CompanyEmp = ({ employee, company , handleChange }) => {
             onChange={handleChange}
           />
         </FormControl>
-        <Table style={{width: 1000}} aria-label="simple table">
+        <Table style={{ width: 1000 }} aria-label="simple table">
           <TableHead>
             <TableRow>
               <TableCell>UID</TableCell>
               <TableCell align="center">Mã nhân viên</TableCell>
               <TableCell align="center">Họ</TableCell>
               <TableCell align="center">Tên</TableCell>
-              <TableCell align="center">Nơi sinh sống</TableCell>
+              <TableCell align="center">Tình trạng làm việc</TableCell>
               <TableCell align="center">Email</TableCell>
-              <TableCell align="left">Ngày tạo tài khoản</TableCell>
+              <TableCell align="left">Ngày tham gia</TableCell>
+              <TableCell align="left">Số điện thoại</TableCell>
+              <TableCell align="left">Địa chỉ</TableCell>
+              <TableCell align="center">Vị trí</TableCell>
               <TableCell align="center">Thao tác</TableCell>
             </TableRow>
           </TableHead>
@@ -70,17 +73,17 @@ const CompanyEmp = ({ employee, company , handleChange }) => {
             {employee.length > 0 ? (
               employee.map(row => (
                 <TableRow key={row.id}>
-                  <TableCell component="th" scope="row">
+                  <TableCell component="th" align="center" scope="row">
                     {row.id}
                   </TableCell>
-                  <TableCell align="center">{row.nickname}</TableCell>
-                  <TableCell align="center">{row.phoneNumber}</TableCell>
-                  <TableCell align="center">
-                    {row.gender === "Male" ? "Nam" : "Nữ"}
-                  </TableCell>
-                  <TableCell align="center">{row.location}</TableCell>
+                  <TableCell align="center">{row.firstName}</TableCell>
+                  <TableCell align="center">{row.lastName}</TableCell>
+                  <TableCell align="center">{row.status}</TableCell>
                   <TableCell align="center">{row.email}</TableCell>
-                  <TableCell align="left">{row.created_at}</TableCell>
+                  <TableCell align="left">{row.joined_at}</TableCell>
+                  <TableCell align="left">{row.phoneNumber}</TableCell>
+                  <TableCell align="left">{row.location}</TableCell>
+                  <TableCell align="center">{row.position}</TableCell>
                   <TableCell align="center">
                     <Button
                       color="primary"

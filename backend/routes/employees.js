@@ -94,8 +94,10 @@ router.post("/:company", (req, res) => {
 
 router.get("/company/:company", (req, res) => {
   connection.query(
-    `SELECT * FROM employee
-            where employee.company = ${req.params.company}`,
+    `SELECT employee.empId as id, employee.firstName, employee.lastName, employee.workingStatus, employee.created_at, user.email, user.phoneNumber, user.location, vaitro.positionName FROM ((Employee
+      INNER JOIN User ON employee.user = user.uid)
+        INNER JOIN vaitro ON employee.position = vaitro.posId)
+    WHERE employee.company = ${req.params.company};`,
     (error, doc) => {
       if (error) {
         res.status(400).json({ error });
@@ -103,15 +105,18 @@ router.get("/company/:company", (req, res) => {
       }
       res.status(200).json({
         counts: doc.length,
-        data: doc.map(item => {
-          return {
-            id: item.empId,
-            name: `${item.firstName} ${item.lastName}`,
+        data: doc.map(item =>{
+          return{
+            id: item.id,
+            firstName: item.firstName,
+            lastName: item.lastName,
             status: item.workingStatus,
-            position: item.position,
-            user: item.user,
-            joined_at: moment(item.created_at).format("LLLL")
-          };
+            joined_at: moment(item.created_at).format('LLLL'),
+            email: item.email,
+            phoneNumber: item.phoneNumber,
+            location: item.location,
+            position: item.positionName
+          }
         })
       });
     }

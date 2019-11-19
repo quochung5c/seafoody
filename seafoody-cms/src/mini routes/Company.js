@@ -27,7 +27,7 @@ class Company extends Component {
     )
       .then(response => {
         this.setState({ employee: response.data });
-        console.log(this.state.employee);
+        console.log(this.state.employee.data);
       })
       .catch(error => {
         console.log(error.response);
