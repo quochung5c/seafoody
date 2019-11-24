@@ -35,10 +35,11 @@ const upload = multer({
 
 router.get("/", (req, res) => {
   connection.query(
-    `SELECT product.id, product.productName, product.price, product.likes, product.productType, promotion.promoPercent, product.posted_at, product.description, product.pricePerRatio, company.companyName, product.company, promotion.promocode, employee.firstName, employee.lastName FROM (((Product 
+    `SELECT product.id, product.productName, product.price, product.likes, 
+    product.productType, promotion.promoPercent, product.posted_at, product.description, product.pricePerRatio, company.companyName, 
+    product.company, promotion.promocode FROM ((Product 
         INNER JOIN Company ON product.company = company.companyId)
-          INNER JOIN promotion ON product.promotion = promotion.promotionId)
-          INNER JOIN employee ON product.employee = employee.empId);`,
+          INNER JOIN promotion ON product.promotion = promotion.promotionId);`,
     // `SELECT * FROM Product`,
     (err, doc) => {
       res.status(200).json({
@@ -58,7 +59,6 @@ router.get("/", (req, res) => {
             promotion: item.promotion,
             company: item.companyName,
             promotion: item.promocode,
-            employee: `${item.firstName} ` + `${item.lastName}`,
             likes: item.likes,
             created_at: moment(item.posted_at).format("LLLL"),
             description: item.description
@@ -72,17 +72,17 @@ router.get("/", (req, res) => {
 
 router.get("/searchById/:id", (req, res) => {
   connection.query(
-    `SELECT product.id, product.productName, product.price, product.productType, product.likes,promotion.promoPercent, product.posted_at, product.description, product.pricePerRatio, company.companyName, product.company, promotion.promocode, employee.firstName, employee.lastName FROM (((Product 
-      INNER JOIN Company ON product.company = company.companyId)
-        INNER JOIN promotion ON product.promotion = promotion.promotionId)
-        INNER JOIN employee ON product.employee = employee.empId) WHERE id = ${req.params.id}`,
+    `SELECT product.id, product.productName, product.price, product.likes, 
+    product.productType, promotion.promoPercent, product.posted_at, product.description, product.pricePerRatio, company.companyName, 
+    product.company, promotion.promocode FROM ((Product 
+        INNER JOIN Company ON product.company = company.companyId)
+          INNER JOIN promotion ON product.promotion = promotion.promotionId) WHERE id = ${req.params.id};`,
     (err, doc) => {
       res.status(200).json({
         counts: doc.length,
         data: doc.map(item => {
           return {
             id: item.id,
-            employee_id: item.empId,
             company_id: item.companyId,
             name: item.productName,
             type: item.productType,
@@ -90,7 +90,6 @@ router.get("/searchById/:id", (req, res) => {
             promotion: item.promotion,
             company: item.companyName,
             promotion: item.promocode,
-            employee: `${item.firstName} ` + `${item.lastName}`,
             likes: item.likes,
             created_at: moment(item.posted_at).format("LLLL"),
             description: item.description
@@ -104,17 +103,17 @@ router.get("/searchById/:id", (req, res) => {
 
 router.get("/searchByName/:name", (req, res) => {
   connection.query(
-    `SELECT product.id, product.productName, product.price, product.productType,product.likes, promotion.promoPercent, product.posted_at, product.description, product.pricePerRatio, company.companyName, product.company, promotion.promocode, employee.firstName, employee.lastName FROM (((Product 
-      INNER JOIN Company ON product.company = company.companyId)
-        INNER JOIN promotion ON product.promotion = promotion.promotionId)
-        INNER JOIN employee ON product.employee = employee.empId) WHERE product.productName LIKE '%${req.params.name}%';`,
+    `SELECT product.id, product.productName, product.price, product.likes, 
+    product.productType, promotion.promoPercent, product.posted_at, product.description, product.pricePerRatio, company.companyName, 
+    product.company, promotion.promocode FROM ((Product 
+        INNER JOIN Company ON product.company = company.companyId)
+          INNER JOIN promotion ON product.promotion = promotion.promotionId) WHERE product.productName LIKE '%${req.params.name}%';`,
     (err, doc) => {
       res.status(200).json({
         counts: doc.length,
         data: doc.map(item => {
           return {
             id: item.id,
-            employee_id: item.empId,
             company_id: item.companyId,
             name: item.productName,
             type: item.productType,
@@ -122,7 +121,6 @@ router.get("/searchByName/:name", (req, res) => {
             promotion: item.promotion,
             company: item.companyName,
             promotion: item.promocode,
-            employee: `${item.firstName} ` + `${item.lastName}`,
             likes: item.likes,
             created_at: moment(item.posted_at).format("LLLL"),
             description: item.description
@@ -136,17 +134,17 @@ router.get("/searchByName/:name", (req, res) => {
 
 router.get("/orderByPrice/ascending", (req, res) => {
   connection.query(
-    `SELECT product.id, product.productName, product.price, product.productType, product.likes,promotion.promoPercent, product.posted_at, product.description, product.pricePerRatio, company.companyName, product.company, promotion.promocode, employee.firstName, employee.lastName FROM (((Product 
-      INNER JOIN Company ON product.company = company.companyId)
-        INNER JOIN promotion ON product.promotion = promotion.promotionId)
-        INNER JOIN employee ON product.employee = employee.empId) ORDER BY product.price;`,
+    `SELECT product.id, product.productName, product.price, product.likes, 
+    product.productType, promotion.promoPercent, product.posted_at, product.description, product.pricePerRatio, company.companyName, 
+    product.company, promotion.promocode FROM ((Product 
+        INNER JOIN Company ON product.company = company.companyId)
+          INNER JOIN promotion ON product.promotion = promotion.promotionId) ORDER BY product.price;`,
     (err, doc) => {
       res.status(200).json({
         counts: doc.length,
         data: doc.map(item => {
           return {
             id: item.id,
-            employee_id: item.empId,
             company_id: item.companyId,
             name: item.productName,
             type: item.productType,
@@ -154,7 +152,6 @@ router.get("/orderByPrice/ascending", (req, res) => {
             promotion: item.promotion,
             company: item.companyName,
             promotion: item.promocode,
-            employee: `${item.firstName} ` + `${item.lastName}`,
             likes: item.likes,
             created_at: moment(item.posted_at).format("LLLL"),
             description: item.description
@@ -168,17 +165,17 @@ router.get("/orderByPrice/ascending", (req, res) => {
 
 router.get("/orderByPrice/descending", (req, res) => {
   connection.query(
-    `SELECT product.id, product.productName, product.price, product.productType,  product.likes, promotion.promoPercent, product.posted_at, product.description, product.pricePerRatio, company.companyName, product.company, promotion.promocode, employee.firstName, employee.lastName FROM (((Product 
-      INNER JOIN Company ON product.company = company.companyId)
-        INNER JOIN promotion ON product.promotion = promotion.promotionId)
-        INNER JOIN employee ON product.employee = employee.empId) ORDER BY product.price DESC;`,
+    `SELECT product.id, product.productName, product.price, product.likes, 
+    product.productType, promotion.promoPercent, product.posted_at, product.description, product.pricePerRatio, company.companyName, 
+    product.company, promotion.promocode FROM ((Product 
+        INNER JOIN Company ON product.company = company.companyId)
+          INNER JOIN promotion ON product.promotion = promotion.promotionId) ORDER BY product.price DESC;`,
     (err, doc) => {
       res.status(200).json({
         counts: doc.length,
         data: doc.map(item => {
           return {
             id: item.id,
-            employee_id: item.empId,
             company_id: item.companyId,
             name: item.productName,
             type: item.productType,
@@ -186,7 +183,6 @@ router.get("/orderByPrice/descending", (req, res) => {
             promotion: item.promotion,
             company: item.companyName,
             promotion: item.promocode,
-            employee: `${item.firstName} ` + `${item.lastName}`,
             likes: item.likes,
             created_at: moment(item.posted_at).format("LLLL"),
             description: item.description
@@ -200,17 +196,17 @@ router.get("/orderByPrice/descending", (req, res) => {
 
 router.get("/filterBy/:genre", (req, res) => {
   connection.query(
-    `SELECT product.id, product.productName, product.price, product.productType,  product.likes, promotion.promoPercent, product.posted_at, product.description, product.pricePerRatio, company.companyName, product.company, promotion.promocode, employee.firstName, employee.lastName FROM (((Product 
-    INNER JOIN Company ON product.company = company.companyId)
-      INNER JOIN promotion ON product.promotion = promotion.promotionId)
-      INNER JOIN employee ON product.employee = employee.empId) WHERE productType = '${req.params.genre}';`,
+    `SELECT product.id, product.productName, product.price, product.likes, 
+    product.productType, promotion.promoPercent, product.posted_at, product.description, product.pricePerRatio, company.companyName, 
+    product.company, promotion.promocode FROM ((Product 
+        INNER JOIN Company ON product.company = company.companyId)
+          INNER JOIN promotion ON product.promotion = promotion.promotionId) WHERE productType = '${req.params.genre}';`,
     (req, doc) => {
       res.status(200).json({
         counts: doc.length,
         data: doc.map(item => {
           return {
             id: item.id,
-            employee_id: item.empId,
             company_id: item.companyId,
             name: item.productName,
             type: item.productType,
@@ -218,7 +214,6 @@ router.get("/filterBy/:genre", (req, res) => {
             promotion: item.promotion,
             company: item.companyName,
             promotion: item.promocode,
-            employee: `${item.firstName} ` + `${item.lastName}`,
             likes: item.likes,
             created_at: moment(item.posted_at).format("LLLL"),
             description: item.description
@@ -258,16 +253,16 @@ router.post("/", upload.single("product"), (req, res) => {
     .upload(req.file.path, { resource_type: "image" })
     .then(document => {
       connection.query(
-        `SELECT Employee.*, company.companyName FROM Employee INNER JOIN Company ON employee.company = company.companyId WHERE user = ${req.body.user}`,
+        `SELECT company.* FROM User INNER JOIN Company ON user.company = company.companyId WHERE user = ${req.body.user}`,
         (error, doc) => {
           if (doc.length === 0) {
-            res.status(403).json({ message: "Not found" });
+            res.status(403).json({ message: "Bạn phải tham gia 1 công ty để đăng sản phẩm!" });
             return;
           } else {
             console.log(document.secure_url);
             connection.query(
-              `INSERT INTO Product (productName,price,productType,posted_at,company,description,promotion,pricePerRatio,imageUrl,employee) VALUES (
-          '${req.body.productName}',${req.body.price},'${req.body.productType}',NOW(),${doc[0].company},'${req.body.description}',${req.body.promotion},'${req.body.pricePerRatio}','${document.secure_url}',${doc[0].empId}
+              `INSERT INTO Product (productName,price,productType,posted_at,company,description,promotion,pricePerRatio,imageUrl) VALUES (
+          '${req.body.productName}',${req.body.price},'${req.body.productType}',NOW(),${doc[0].company},'${req.body.description}',${req.body.promotion},'${req.body.pricePerRatio}','${document.secure_url}'
         );`,
               (err, response) => {
                 if (err) {

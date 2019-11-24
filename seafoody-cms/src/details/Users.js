@@ -129,6 +129,7 @@ function Users() {
               <TableCell align="center">Giới tính</TableCell>
               <TableCell align="center">Nơi sinh sống</TableCell>
               <TableCell align="center">Email</TableCell>
+              <TableCell align="center">Công ty</TableCell>
               <TableCell align="left">Ngày tạo tài khoản</TableCell>
               <TableCell align="center">Thao tác</TableCell>
             </TableRow>
@@ -154,6 +155,7 @@ function Users() {
                   </TableCell>
                   <TableCell align="center">{row.location}</TableCell>
                   <TableCell align="center">{row.email}</TableCell>
+                  <TableCell align="center">{row.company}</TableCell>
                   <TableCell align="left">{row.created_at}</TableCell>
                   <TableCell align="center">
                     <Button

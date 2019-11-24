@@ -82,10 +82,10 @@ router.get("/:id", (req, res) => {
 
 router.get("/products/:company", (req, res) => {
   connection.query(
-    `SELECT product.id, product.productName, product.price, product.likes, product.productType, promotion.promoPercent, product.posted_at, product.description, product.pricePerRatio, company.companyName, product.company, promotion.promocode, employee.firstName, employee.lastName FROM (((Product 
+    `SELECT product.id, product.productName, product.price, product.likes, product.productType, promotion.promoPercent, product.posted_at, product.description, product.pricePerRatio, 
+    company.companyName, product.company, promotion.promocode FROM ((Product 
       INNER JOIN Company ON product.company = company.companyId)
         INNER JOIN promotion ON product.promotion = promotion.promotionId)
-        INNER JOIN employee ON product.employee = employee.empId)
       WHERE product.company = ${req.params.company};`,
     (err, doc) => {
       res.status(200).json({
@@ -133,7 +133,6 @@ router.get("/searchById/:id", (req, res) => {
           return {
             id: item.companyId,
             name: item.companyName,
-            employees: item.NumberOfEmp,
             location: item.location,
             phoneNumber: item.phoneNumber,
             description: item.description
@@ -145,27 +144,21 @@ router.get("/searchById/:id", (req, res) => {
 });
 
 router.get("/searchByName/:name", (req, res) => {
+
+});
+
+// Lấy các người dùng thuộc công ty
+router.get("/users/:company", (req, res) => {
   connection.query(
-    `SELECT company.companyId, COUNT(empId) AS NumberOfEmp, employee.company as companyId, company.companyName, company.location, company.phoneNumber, company.description FROM employee 
-           INNER JOIN Company ON employee.company = company.companyId WHERE company.companyName LIKE '%${req.params.name}%' group by company ;`,
-    (error, doc) => {
+    `SELECT * FROM User WHERE company = ${req.params.company}`,
+    (error,
+    document => {
       if (error) {
         res.status(400).json({ error });
         return;
       }
-      res.status(200).json({
-        data: doc.map(item => {
-          return {
-            id: item.companyId,
-            name: item.companyName,
-            employees: item.NumberOfEmp,
-            location: item.location,
-            phoneNumber: item.phoneNumber,
-            description: item.description
-          };
-        })
-      });
-    }
+      res.status(200).json({ counts: document.length, data: document });
+    })
   );
 });
 

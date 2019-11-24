@@ -24,6 +24,7 @@ router.get("/credit", (req, res) => {
     res.status(200).json({ counts: data.length, data: data });
   });
 });
+
 // 2. Insert credit card
 router.post("/credit", (req, res) => {
   connection.query(

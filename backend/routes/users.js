@@ -8,12 +8,13 @@ const moment = require("moment");
 moment.locale("vi");
 
 router.get("/", (req, res) => {
-  connection.query("SELECT * FROM user", (err, doc) => {
+  connection.query("SELECT User.*, company.companyName FROM user INNER JOIN Company ON user.company = company.companyId;", (err, doc) => {
     res.status(200).json({
       data: doc.map(item => {
         return {
           nickname: item.nickname,
           phoneNumber: item.phoneNumber,
+          company: item.companyName,
           id: item.uid,
           gender: item.gender,
           avatar: item.avatarUrl,

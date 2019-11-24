@@ -133,7 +133,6 @@ function Products() {
               <TableCell align="center">Mã giảm giá</TableCell>
               <TableCell align="center">Lượt thích</TableCell>
               <TableCell align="center">Công ty sản xuất</TableCell>
-              <TableCell align="left">Nhân viên đăng hàng</TableCell>
               <TableCell align="left">Ngày tạo</TableCell>
               <TableCell align="center">Thao tác</TableCell>
             </TableRow>
@@ -152,7 +151,6 @@ function Products() {
                   <TableCell align="center">{row.promotion}</TableCell>
                   <TableCell align="center">{row.likes}</TableCell>
                   <TableCell align="left">{row.company}</TableCell>
-                  <TableCell align="left">{row.employee}</TableCell>
                   <TableCell align="left">{row.created_at}</TableCell>
                   <TableCell align="center">
                     <Button

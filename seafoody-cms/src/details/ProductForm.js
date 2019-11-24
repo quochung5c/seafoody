@@ -63,6 +63,7 @@ class ProductForm extends Component {
         console.log(response ? "Nhập dữ liệu thành công" : "Loading...");
       })
       .catch(error => {
+        console.log(error.response);
         console.log(
           error.response.status !== 200
             ? "Đã có lỗi xảy ra. Vui lòng nhập lại"
