@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import UserForm from "./UserForm";
-
 import { makeStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -39,6 +38,7 @@ function Users() {
   const [users, setUsers] = useState([]);
   const [query, setQuery] = useState(null);
   const [open, setOpen] = React.useState(false);
+  const [edit, setEdit] = React.useState(false);
 
   const handleDelete = id => {
     axios
@@ -57,6 +57,14 @@ function Users() {
 
   const handleClose = () => {
     setOpen(false);
+  };
+
+  const handleClickEdit = () => {
+    setEdit(true);
+  };
+
+  const handleCloseEdit = () => {
+    setEdit(false);
   };
 
   useEffect(() => {
@@ -129,7 +137,6 @@ function Users() {
               <TableCell align="center">Giới tính</TableCell>
               <TableCell align="center">Nơi sinh sống</TableCell>
               <TableCell align="center">Email</TableCell>
-              <TableCell align="center">Công ty</TableCell>
               <TableCell align="left">Ngày tạo tài khoản</TableCell>
               <TableCell align="center">Thao tác</TableCell>
             </TableRow>
@@ -141,7 +148,16 @@ function Users() {
                   <TableCell component="th" scope="row">
                     {row.id}
                   </TableCell>
-                  <TableCell align="center">{row.nickname}</TableCell>
+                  <TableCell align="center">
+                    <Link
+                      to={{
+                        pathname: `/users/${row.id}`,
+                        state: { id: row.id }
+                      }}
+                    >
+                      {row.nickname}
+                    </Link>
+                  </TableCell>
                   <TableCell align="center">{row.phoneNumber}</TableCell>
                   <TableCell align="center">
                     <Link
@@ -155,15 +171,23 @@ function Users() {
                   </TableCell>
                   <TableCell align="center">{row.location}</TableCell>
                   <TableCell align="center">{row.email}</TableCell>
-                  <TableCell align="center">{row.company}</TableCell>
                   <TableCell align="left">{row.created_at}</TableCell>
                   <TableCell align="center">
                     <Button
                       color="primary"
                       style={{ marginRight: 8 }}
                       variant="contained"
+                      onClick={handleClickEdit}
                     >
-                      Sửa
+                      <Link
+                        style={{ color: "white", textDecoration: "none" }}
+                        to={{
+                          pathname: `/user/edit/${row.id}`,
+                          state: { id: row.id }
+                        }}
+                      >
+                        Sửa
+                      </Link>
                     </Button>
                     <Button
                       color="secondary"

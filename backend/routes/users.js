@@ -8,13 +8,12 @@ const moment = require("moment");
 moment.locale("vi");
 
 router.get("/", (req, res) => {
-  connection.query("SELECT User.*, company.companyName FROM user INNER JOIN Company ON user.company = company.companyId;", (err, doc) => {
+  connection.query("SELECT * FROM user;", (err, doc) => {
     res.status(200).json({
       data: doc.map(item => {
         return {
           nickname: item.nickname,
           phoneNumber: item.phoneNumber,
-          company: item.companyName,
           id: item.uid,
           gender: item.gender,
           avatar: item.avatarUrl,
@@ -40,6 +39,7 @@ router.get("/:uid", (req, res) => {
             id: item.uid,
             gender: item.gender,
             avatar: item.avatarUrl,
+            company: item.company,
             location: item.location,
             created_at: moment(item.created_at).format("LLLL"),
             email: item.email
@@ -53,7 +53,6 @@ router.get("/:uid", (req, res) => {
     }
   );
 });
-
 
 router.get("/gender/:gender", (req, res) => {
   connection.query(
@@ -157,29 +156,61 @@ router.get("/orderByName/ascending", (req, res) => {
 });
 
 router.get("/orderByName/descending", (req, res) => {
-  connection.query(`SELECT * FROM User ORDER BY nickname DESC`, (error, doc) => {
-    if (error) {
-      res.status(400).json({ error });
-      return;
+  connection.query(
+    `SELECT * FROM User ORDER BY nickname DESC`,
+    (error, doc) => {
+      if (error) {
+        res.status(400).json({ error });
+        return;
+      }
+      res.status(200).json({
+        data: doc.map(item => {
+          return {
+            nickname: item.nickname,
+            phoneNumber: item.phoneNumber,
+            id: item.uid,
+            gender: item.gender,
+            avatar: item.avatarUrl,
+            location: item.location,
+            created_at: moment(item.created_at).format("LLLL"),
+            email: item.email
+          };
+        })
+      });
     }
-    res.status(200).json({
-      data: doc.map(item => {
-        return {
-          nickname: item.nickname,
-          phoneNumber: item.phoneNumber,
-          id: item.uid,
-          gender: item.gender,
-          avatar: item.avatarUrl,
-          location: item.location,
-          created_at: moment(item.created_at).format("LLLL"),
-          email: item.email
-        };
-      })
-    });
-  });
+  );
 });
 
-router.patch("/:id", (req, res) => {});
+router.patch("/:id", (req, res) => {
+  // connection.query(
+  //   `SELECT * FROM Company WHERE companyId = ${req.body.company}`,
+  //   (error,
+  //   response => {
+  //     if (errors) {
+  //       res.status(400).json({ error });
+  //       return;
+  //     }
+  //     if (!response) {
+  //       res
+  //         .status(403)
+  //         .json({ message: "Không tìm thấy mã công ty. Vui lòng thử lại" });
+  //       return;
+  //     }
+  //   })
+  // );
+  connection.query(
+    `UPDATE User SET email = '${req.body.email}', phoneNumber = '${req.body.phoneNumber}',
+      location = '${req.body.location}', gender = '${req.body.gender}',company = ${req.body.company} 
+      WHERE uid = ${req.params.id}`,
+    (error, response) => {
+      if (error) {
+        res.status(400).json({ error });
+        return;
+      }
+      res.status(301).json({ response });
+    }
+  );
+});
 
 router.post("/register", (req, res) => {
   // Find exists

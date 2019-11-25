@@ -419,13 +419,14 @@ class ProductForm extends Component {
     console.log(this.state);
     Axios.post("http://localhost:8088/users/register", this.state)
       .then(response => {
-        console.log(
+        alert(
           response.data !== null ? "Nhập dữ liệu thành công" : "Loading..."
         );
         console.log(response.data);
+        window.location.reload();
       })
       .catch(error => {
-        console.log(
+        alert(
           error.response.status !== 200
             ? "Đã có lỗi xảy ra. Vui lòng nhập lại"
             : ""

@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import CompanyProduct from "./CompanyProduct";
-import CompanyEmp from "./CompanyEmp";
 import Axios from "axios";
 
 class Company extends Component {
@@ -8,7 +7,6 @@ class Company extends Component {
     super(props);
     this.state = {
       company: [],
-      employee: [],
       products: []
     };
   }
@@ -22,16 +20,6 @@ class Company extends Component {
         console.log(error.response);
       });
 
-    Axios.get(
-      `http://localhost:8088/employee/company/${this.props.location.state}`
-    )
-      .then(response => {
-        this.setState({ employee: response.data });
-        console.log(this.state.employee.data);
-      })
-      .catch(error => {
-        console.log(error.response);
-      });
 
     Axios.get(
       `http://localhost:8088/companies/products/${this.props.location.state}`
@@ -53,12 +41,6 @@ class Company extends Component {
           <p>Địa chỉ: {this.state.company.location} </p>
           <p>Số diện thoại: {this.state.company.phoneNumber}</p>
           <p>Mô tả về công ty: {this.state.company.description}</p>
-        </div>
-        <div className="listOfEmployee">
-          <CompanyEmp
-            employee={this.state.employee}
-            company={this.state.company}
-          />
         </div>
         <div className="listOfProduct">
           <CompanyProduct data={this.state.products} />
