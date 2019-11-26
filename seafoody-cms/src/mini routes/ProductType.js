@@ -1,33 +1,52 @@
-import React from "react";
+import React, { Component } from "react";
+import { withStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import Input from "@material-ui/core/Input";
-import InputLabel from "@material-ui/core/InputLabel";
-import FormControl from "@material-ui/core/FormControl";
 import Paper from "@material-ui/core/Paper";
+import Axios from "axios";
 
-const CompanyProduct = ({ data, handleChange }) => {
-  return (
-    <div className="list-header" style={{ display: "flex" }}>
-      <div className="title">
-        <h2>Danh sách sản phẩm đã đăng</h2>
-      </div>
-      <div className="header-action">
-        <FormControl style={{ margin: 10 }}>
-          <InputLabel htmlFor="standard-adornment-password">
-            Tìm kiếm sp qua ID
-          </InputLabel>
-          <Input
-            id="standard-adornment-password"
-            type={"text"}
-            onChange={handleChange}
-          />
-        </FormControl>
-        <Paper style={{ width: "100%", overlowX: "auto" }}>
-          <Table style={{ minWidth: 800 }} aria-label="simple table">
+const styles = theme => ({
+  root: {
+    width: "100%",
+    overflowX: "auto"
+  },
+  table: {
+    minWidth: 650
+  }
+});
+
+class ProductType extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      data: []
+    };
+  }
+
+  componentDidMount() {
+    console.log(this.props.location.state);
+    Axios.get(
+      `http://localhost:8088/products/ptype/${this.props.location.state}`
+    )
+      .then(response => {
+        this.setState({ data: response.data });
+        console.log(this.state.data.counts);
+        console.log(this.state.data.data);
+      })
+      .catch(error => {
+        console.log(error.response);
+      });
+  }
+  render() {
+    const { data } = this.state;
+    return (
+      <div>
+        <h1>Danh sách sản phẩm {this.props.location.state}</h1>
+        <Paper className={styles.root}>
+          <Table className={styles.table} aria-label="simple table">
             <TableHead>
               <TableRow>
                 <TableCell>ID</TableCell>
@@ -61,14 +80,14 @@ const CompanyProduct = ({ data, handleChange }) => {
                   </TableRow>
                 ))
               ) : (
-                <p style={{ textAlign: "center" }}>Không tìm thấy sản phẩm</p>
+                <p style={{ textAlign: "center" }}>Không tìm thấy tài khoản</p>
               )}
             </TableBody>
           </Table>
         </Paper>
       </div>
-    </div>
-  );
-};
+    );
+  }
+}
 
-export default CompanyProduct;
+export default withStyles(styles)(ProductType);

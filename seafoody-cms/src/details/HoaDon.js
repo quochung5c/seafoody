@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import ProductForm from "./ProductForm";
+import Axios from "axios";
+import HoadonForm from "./HoadonForm";
 
 import { makeStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
@@ -13,13 +14,9 @@ import Input from "@material-ui/core/Input";
 import InputLabel from "@material-ui/core/InputLabel";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import FormControl from "@material-ui/core/FormControl";
-import SearchIcon from "@material-ui/icons/Search";
 import Slide from "@material-ui/core/Slide";
 import { Button } from "@material-ui/core";
 import { Link } from "react-router-dom";
-
-import axios from "axios";
-import Axios from "axios";
 
 const useStyles = makeStyles({
   root: {
@@ -30,30 +27,34 @@ const useStyles = makeStyles({
     minWidth: 650
   }
 });
-
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-function Products() {
+const HoaDon = () => {
   const classes = useStyles();
-  const [products, setProducts] = useState([]);
-  const [query, setQuery] = useState(null);
-  const [open, setOpen] = React.useState(false);
-
-  const handleDelete = id => {
-    Axios.delete(`http://localhost:8088/products/${id}`)
+  const [data, setData] = useState([]);
+  const [open, setOpen] = useState(false);
+  useEffect(() => {
+    Axios.get(`http://localhost:8088/bills/hoadon`)
       .then(response => {
-        alert("Xóa thành công sản phẩm");
-        console.log(response);
-        window.location.reload();
+        console.log(response.data.data);
+        setData(response.data);
       })
       .catch(error => {
-        alert("Xóa không thành công sản phẩm");
         console.log(error.response);
       });
-    alert(`Xóa thành công mã sản phẩm ${id}`);
-    window.location.reload();
+  }, []);
+  const handleChange = event => {};
+  const handleDelete = id => {
+    Axios.delete(`http://localhost:8088/bills/hoadon/${id}`)
+      .then(response => {
+        alert("Xóa thành công");
+        console.log(response);
+      })
+      .catch(error => {
+        alert("Xóa thất bại, vui lòng kiểm tra lại");
+      });
   };
   const handleClickOpen = () => {
     setOpen(true);
@@ -62,28 +63,11 @@ function Products() {
   const handleClose = () => {
     setOpen(false);
   };
-  useEffect(() => {
-    axios.get("http://localhost:8088/products").then(result => {
-      setProducts(result.data.data);
-    });
-  }, []);
-  const handleChange = event => {
-    setQuery(event.target.value);
-  };
-
-  const handleSubmit = event => {
-    event.preventDefault();
-    axios
-      .get(`http://localhost:8088/products/searchById/${query}`)
-      .then(result => {
-        setProducts(result.data.data);
-      });
-  };
   return (
     <div className="list">
       <div className="list-header" style={{ display: "flex" }}>
         <div className="title">
-          <h2>Quản lý sản phẩm</h2>
+          <h2>Quản lý hóa đơn</h2>
         </div>
         <div className="header-action">
           <Button
@@ -96,31 +80,27 @@ function Products() {
             }}
             onClick={handleClickOpen}
           >
-            Tạo sản phẩm
+            Tạo hóa đơn
           </Button>
-          <ProductForm
+          <HoadonForm
             open={open}
             handleClose={handleClose}
             transition={Transition}
           />
           <FormControl style={{ margin: 10 }}>
-            <form onSubmit={handleSubmit}>
-              <InputLabel htmlFor="standard-adornment-password">
-                Tìm kiếm sản phẩm theo ID
-              </InputLabel>
-              <Input
-                id="standard-adornment-password"
-                type={"text"}
-                onChange={handleChange}
-                endAdornment={
-                  <InputAdornment position="end">
-                    <IconButton type="submit">
-                      <SearchIcon />
-                    </IconButton>
-                  </InputAdornment>
-                }
-              />
-            </form>
+            <InputLabel htmlFor="standard-adornment-password">
+              Tìm kiếm hóa đơn theo id
+            </InputLabel>
+            <Input
+              id="standard-adornment-password"
+              type={"text"}
+              onChange={handleChange}
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton type="submit"></IconButton>
+                </InputAdornment>
+              }
+            />
           </FormControl>
         </div>
       </div>
@@ -129,39 +109,44 @@ function Products() {
           <TableHead>
             <TableRow>
               <TableCell>ID</TableCell>
-              <TableCell align="center">Tên sản phẩm</TableCell>
-              <TableCell align="center">Giá sản phẩm</TableCell>
-              <TableCell align="center">Loại hàng</TableCell>
-              <TableCell align="center">Giảm giá</TableCell>
-              <TableCell align="center">Mã giảm giá</TableCell>
-              <TableCell align="center">Lượt thích</TableCell>
-              <TableCell align="center">Công ty sản xuất</TableCell>
-              <TableCell align="left">Ngày tạo</TableCell>
+              <TableCell align="left">Khách hàng</TableCell>
+              <TableCell align="left">Email</TableCell>
+              <TableCell align="left">Số điện thoại</TableCell>
+              <TableCell align="center">Thời gian đặt đơn</TableCell>
+              <TableCell align="center">Thời gian chuyển hàng</TableCell>
+              <TableCell align="center">Phương thức giao dịch</TableCell>
+              <TableCell align="center">Trạng thái tiếp nhận</TableCell>
+              <TableCell align="center">Ghi chú</TableCell>
+              <TableCell align="center">Địa chỉ giao hàng</TableCell>
               <TableCell align="center">Thao tác</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {products.length > 0 ? (
-              products.map(row => (
+            {data.counts > 0 ? (
+              data.data.map(row => (
                 <TableRow key={row.id}>
                   <TableCell component="th" scope="row">
-                    {row.id}
-                  </TableCell>
-                  <TableCell align="center">{row.name}</TableCell>
-                  <TableCell align="center">{row.price}</TableCell>
-                  <TableCell align="center">
                     <Link
-                      style={{ color: "blue", textDecoration: "none" }}
-                      to={{ pathname: `/ptype/${row.type}`, state: row.type }}
+                      style={{ color: "black", textDecoration: "none" }}
+                      to={{
+                        pathname: `/bills/${row.id}`,
+                        state: {
+                          id: row.id
+                        }
+                      }}
                     >
-                      {row.type}
+                      {row.id}
                     </Link>
                   </TableCell>
-                  <TableCell align="center">{row.promotion_percent}</TableCell>
-                  <TableCell align="center">{row.promotion}</TableCell>
-                  <TableCell align="center">{row.likes}</TableCell>
-                  <TableCell align="left">{row.company}</TableCell>
-                  <TableCell align="left">{row.created_at}</TableCell>
+                  <TableCell align="left">{row.customer.nickname}</TableCell>
+                  <TableCell align="left">{row.customer.email}</TableCell>
+                  <TableCell align="left">{row.customer.phoneNumber}</TableCell>
+                  <TableCell align="center">{row.created_date}</TableCell>
+                  <TableCell align="center">{row.shipping_time}</TableCell>
+                  <TableCell align="center">{row.payment_method}</TableCell>
+                  <TableCell align="center">{row.status}</TableCell>
+                  <TableCell align="center">{row.comment}</TableCell>
+                  <TableCell align="center">{row.address}</TableCell>
                   <TableCell align="center">
                     <Button
                       color="primary"
@@ -171,7 +156,7 @@ function Products() {
                       <Link
                         style={{ color: "white", textDecoration: "none" }}
                         to={{
-                          pathname: `/product/edit/${row.id}`,
+                          pathname: `/hoadon/edit/${row.id}`,
                           state: { id: row.id }
                         }}
                       >
@@ -196,6 +181,6 @@ function Products() {
       </Paper>
     </div>
   );
-}
+};
 
-export default Products;
+export default HoaDon;

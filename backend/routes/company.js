@@ -143,22 +143,19 @@ router.get("/searchById/:id", (req, res) => {
   );
 });
 
-router.get("/searchByName/:name", (req, res) => {
-
-});
+router.get("/searchByName/:name", (req, res) => {});
 
 // Lấy các người dùng thuộc công ty
 router.get("/users/:company", (req, res) => {
   connection.query(
     `SELECT * FROM User WHERE company = ${req.params.company}`,
-    (error,
-    document => {
+    (error, document) => {
       if (error) {
         res.status(400).json({ error });
         return;
       }
       res.status(200).json({ counts: document.length, data: document });
-    })
+    }
   );
 });
 
@@ -171,6 +168,21 @@ router.delete("/:company", (req, res) => {
         return;
       }
       res.status(200).json({ message: "Đã xóa thành công", response });
+    }
+  );
+});
+
+router.patch("/:company", (req, res) => {
+  connection.query(
+    `UPDATE Company SET companyName = '${req.body.companyName}',
+  location = '${req.body.location}', description = '${req.body.description}',
+  phoneNumber = '${req.body.phoneNumber}' WHERE companyId = ${req.params.company} `,
+    (error, response) => {
+      if (error) {
+        res.status(400).json({ message: "Có lỗi", error });
+        return;
+      }
+      res.status(200).json({ response });
     }
   );
 });

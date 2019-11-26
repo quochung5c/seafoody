@@ -69,7 +69,6 @@ function Users() {
 
   useEffect(() => {
     axios.get("http://localhost:8088/users").then(result => {
-      console.log(result.data.data);
       setUsers(result.data.data);
     });
   }, []);
@@ -150,6 +149,7 @@ function Users() {
                   </TableCell>
                   <TableCell align="center">
                     <Link
+                      style={{ color: "blue", textDecoration: "none" }}
                       to={{
                         pathname: `/users/${row.id}`,
                         state: { id: row.id }
@@ -161,6 +161,7 @@ function Users() {
                   <TableCell align="center">{row.phoneNumber}</TableCell>
                   <TableCell align="center">
                     <Link
+                      style={{ color: "blue", textDecoration: "none" }}
                       to={{
                         pathname: `/gender/${row.gender}`,
                         state: { gender: row.gender }

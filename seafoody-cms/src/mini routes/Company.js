@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import CompanyProduct from "./CompanyProduct";
+import CompanyUser from "./CompanyUser";
 import Axios from "axios";
 
 class Company extends Component {
@@ -7,7 +8,8 @@ class Company extends Component {
     super(props);
     this.state = {
       company: [],
-      products: []
+      products: [],
+      users: []
     };
   }
   componentDidMount() {
@@ -20,17 +22,24 @@ class Company extends Component {
         console.log(error.response);
       });
 
-
     Axios.get(
-      `http://localhost:8088/companies/products/${this.props.location.state}`
+      `http://localhost:8088/products/company/${this.props.location.state}`
     )
       .then(response => {
         this.setState({ products: response.data });
-        console.log(this.state.products);
+        console.log("Product on company");
+        console.log(this.state.products.data);
       })
       .catch(error => {
         console.log(error.response);
       });
+    Axios.get(
+      `http://localhost:8088/companies/users/${this.props.location.state}`
+    ).then(response => {
+      this.setState({ users: response.data });
+      console.log("User on company");
+      console.log(this.state.users);
+    });
   }
   render() {
     return (
@@ -44,6 +53,9 @@ class Company extends Component {
         </div>
         <div className="listOfProduct">
           <CompanyProduct data={this.state.products} />
+        </div>
+        <div className="listOfUsers">
+          <CompanyUser data={this.state.users} />
         </div>
       </div>
     );

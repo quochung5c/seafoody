@@ -18,7 +18,7 @@ import Slide from "@material-ui/core/Slide";
 import { Button } from "@material-ui/core";
 import { Link } from "react-router-dom";
 
-import CompanyForm from './CompanyForm';
+import CompanyForm from "./CompanyForm";
 
 import axios from "axios";
 import Axios from "axios";
@@ -50,8 +50,7 @@ function Products() {
         window.location.reload();
       })
       .catch(error => {
-        alert('Xóa không thành công!')
-        console.log(error.response);
+        alert("Xóa không thành công!");
       });
   };
   const handleClickOpen = () => {
@@ -63,10 +62,8 @@ function Products() {
   };
   useEffect(() => {
     axios.get("http://localhost:8088/companies").then(result => {
-      console.log(result.data.data);
       setCompanies(result.data.data);
     });
-    
   }, []);
   const handleChange = event => {
     setQuery(event.target.value);
@@ -130,7 +127,7 @@ function Products() {
           <TableHead>
             <TableRow>
               <TableCell>ID</TableCell>
-              <TableCell align="center">Tên công ty</TableCell>
+              <TableCell align="left">Tên công ty</TableCell>
               <TableCell align="center">Địa chỉ</TableCell>
               <TableCell align="center">Số điện thoại</TableCell>
               <TableCell align="center">Mô tả</TableCell>
@@ -144,10 +141,11 @@ function Products() {
                   <TableCell component="th" scope="row">
                     {row.id}
                   </TableCell>
-                  <TableCell align="center">
+                  <TableCell align="left">
                     <Link
+                      style={{ color: "blue", textDecoration: "none" }}
                       to={{
-                        pathname: `/company/${row.id}`,
+                        pathname: `/companies/${row.id}`,
                         state: row.id
                       }}
                     >
@@ -163,7 +161,15 @@ function Products() {
                       style={{ marginRight: 8 }}
                       variant="contained"
                     >
-                      Sửa
+                      <Link
+                        style={{ color: "white", textDecoration: "none" }}
+                        to={{
+                          pathname: `/company/edit/${row.id}`,
+                          state: { id: row.id }
+                        }}
+                      >
+                        Sửa
+                      </Link>
                     </Button>
                     <Button
                       color="secondary"

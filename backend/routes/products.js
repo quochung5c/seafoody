@@ -70,6 +70,55 @@ router.get("/", (req, res) => {
   );
 });
 
+router.get("/:id", (req, res) => {
+  connection.query(
+    `SELECT product.id, product.productName, product.price, product.likes, 
+    product.productType, promotion.promoPercent, product.posted_at, product.description, product.pricePerRatio, company.companyName, 
+    product.company, promotion.promocode FROM ((Product 
+        INNER JOIN Company ON product.company = company.companyId)
+          INNER JOIN promotion ON product.promotion = promotion.promotionId)WHERE id = ${req.params.id};`,
+    (error, document) => {
+      if (error) {
+        res.status(400).json({ error });
+        return;
+      }
+      res.status(200).json({ data: document });
+    }
+  );
+});
+
+router.get("/company/:company", (req, res) => {
+  connection.query(
+    `SELECT product.id, product.productName, product.price, product.likes, 
+  product.productType, promotion.promoPercent, product.posted_at, product.description, product.pricePerRatio, company.companyName, 
+  product.company, promotion.promocode FROM ((Product 
+      INNER JOIN Company ON product.company = company.companyId)
+        INNER JOIN promotion ON product.promotion = promotion.promotionId) WHERE company = ${req.params.company};`,
+    (err, doc) => {
+      res.status(200).json({
+        counts: doc.length,
+        data: doc.map(item => {
+          return {
+            id: item.id,
+            company_id: item.companyId,
+            name: item.productName,
+            type: item.productType,
+            price: `${item.price}/${item.pricePerRatio}`,
+            promotion: item.promotion,
+            company: item.companyName,
+            promotion_percent: item.promoPercent + " %",
+            promotion: item.promocode,
+            likes: item.likes,
+            created_at: moment(item.posted_at).format("LLLL"),
+            description: item.description
+          };
+        })
+      });
+      if (err) res.status(400).json({ err });
+    }
+  );
+});
+
 router.get("/searchById/:id", (req, res) => {
   connection.query(
     `SELECT product.id, product.productName, product.price, product.likes, 
@@ -97,6 +146,45 @@ router.get("/searchById/:id", (req, res) => {
         })
       });
       if (err) res.status(400).json({ err });
+    }
+  );
+});
+
+router.get("/ptype/:ptype", (req, res) => {
+  connection.query(
+    `SELECT product.id, product.productName, product.price, product.likes, 
+  product.productType, promotion.promoPercent, product.posted_at, product.description, product.pricePerRatio, company.companyName, 
+  product.company, promotion.promocode FROM ((Product 
+      INNER JOIN Company ON product.company = company.companyId)
+        INNER JOIN promotion ON product.promotion = promotion.promotionId) WHERE productType = '${req.params.ptype}';`,
+    (error, document) => {
+      if (error) {
+        res.status(400).json({ error });
+        return;
+      }
+      res.status(200).json({
+        counts: document.length,
+        data: document.map(item => {
+          return {
+            id: item.id,
+            company_id: item.companyId,
+            name: item.productName,
+            type: item.productType,
+            price: `${
+              item.promoPercent > 0
+                ? item.price - (item.price / 100) * item.promoPercent
+                : item.price
+            }/${item.pricePerRatio}`,
+            promotion_percent: item.promoPercent + " %",
+            promotion: item.promotion,
+            company: item.companyName,
+            promotion: item.promocode,
+            likes: item.likes,
+            created_at: moment(item.posted_at).format("LLLL"),
+            description: item.description
+          };
+        })
+      });
     }
   );
 });
@@ -256,7 +344,9 @@ router.post("/", upload.single("product"), (req, res) => {
         `SELECT company.* FROM User INNER JOIN Company ON user.company = company.companyId WHERE user = ${req.body.user}`,
         (error, doc) => {
           if (doc.length === 0) {
-            res.status(403).json({ message: "Bạn phải tham gia 1 công ty để đăng sản phẩm!" });
+            res.status(403).json({
+              message: "Bạn phải tham gia 1 công ty để đăng sản phẩm!"
+            });
             return;
           } else {
             console.log(document.secure_url);
@@ -298,16 +388,20 @@ router.get("/favorites/:product", (req, res) => {
   );
 });
 
-router.patch("/likes/:product", (req, res) => {
+router.patch("/:id", (req, res) => {
   connection.query(
-    `INSERT INTO Favorites(product,customer) VALUES (${req.params.product},${req.body.user}); 
-    UPDATE Product SET likes = likes + 1 WHERE id = ${req.params.product};`,
+    `UPDATE Product SET 
+    productName = '${req.body.productName}', price = ${req.body.price}, 
+    productType = '${req.body.productType}', description = '${req.body.description}',
+    pricePerRatio = '${req.body.pricePerRatio}'
+    WHERE id = ${req.params.id}
+    `,
     (error, response) => {
       if (error) {
         res.status(400).json({ error });
         return;
       }
-      res.status(201).json({ response });
+      res.status(200).json({ response });
     }
   );
 });
