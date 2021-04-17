@@ -14,7 +14,6 @@ INSERT INTO Product (productName,price,productType,posted_at,company,description
 	'Cá thu một nắng Cần Thơ',250.000,'Do kho',NOW(),2,'Cá thu được phơi khô 30 ngày trước khi đóng gói',2
 );
 
-ALTER TABLE Product MODIFY COLUMN price numeric(19,0);
 UPDATE Product set price = 140000 WHERE id = 2;
 update Product set price = 250000 where id = 3;
 

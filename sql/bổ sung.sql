@@ -1,5 +1,3 @@
-ALTER TABLE Hoadon ADD COLUMN user int;
-ALTER TABLE Hoadon ADD foreign key (user) references User(uid) on delete cascade;
 
 SELECT * FROM hoadon;
 

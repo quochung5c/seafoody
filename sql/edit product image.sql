@@ -1,17 +1,3 @@
--- Edit productImages
-DROP TABLE Product_Image;
-CREATE TABLE Product_Image(
-	imageId int primary key not null auto_increment,
-    imageUrl varchar(255),
-    imageDesc varchar(255)
-);
-
-SELECT * FROM product_image;
-ALTER TABLE Product ADD employee int;
-ALTER TABLE product ADD constraint emp_handle foreign key (employee) references employee(empId);
-
-ALTER TABLE Product ADD constraint new_product_image foreign key (productImg) references product_image(imageId);
-
 SELECT * FROM Product;
 
 INSERT product_image (imageUrl,imageDesc) VALUES ('dokho.com','Mực khô ngon lắm');
