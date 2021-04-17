@@ -1,0 +1,1 @@
+insert INTO User (nickname,created_at,gender,location,phoneNumber,email,avatarUrl,password) values ('Hùng Nguyễn',NOW(),'Male','Hà Nội',0985694605,'imbayonline@gmail.com','http://www.gravatar.com/avatar/eb9fd80527bfe7752cc7d9cef58f9372?s=200&d=retro&r=pg','12345678');
