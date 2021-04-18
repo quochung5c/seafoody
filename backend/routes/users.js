@@ -9,23 +9,24 @@ moment.locale("vi");
 
 router.get("/", (req, res) => {
   connection.query("SELECT * FROM user;", (err, doc) => {
-    res.status(200).json({
-      data: doc.length === 0
-        ? { message: "No data yet" }
-        : doc.map((item) => {
-            return {
-              nickname: item.nickname,
-              phoneNumber: item.phoneNumber,
-              id: item.uid,
-              gender: item.gender,
-              avatar: item.avatarUrl,
-              location: item.location,
-              created_at: moment(item.created_at).format("LLLL"),
-              email: item.email,
-            };
-          }),
-    });
     if (err) res.status(400).json({ err });
+    if (!doc) return res.status(404).json({ message: "Not found" });
+    else {
+      return res.status(200).json({
+        data: doc.map((item) => {
+          return {
+            nickname: item.nickname,
+            phoneNumber: item.phoneNumber,
+            id: item.uid,
+            gender: item.gender,
+            avatar: item.avatarUrl,
+            location: item.location,
+            created_at: moment(item.created_at).format("LLLL"),
+            email: item.email,
+          };
+        }),
+      });
+    }
   });
 });
 
