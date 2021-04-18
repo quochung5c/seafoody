@@ -10,18 +10,20 @@ moment.locale("vi");
 router.get("/", (req, res) => {
   connection.query("SELECT * FROM user;", (err, doc) => {
     res.status(200).json({
-      data: doc.map(item => {
-        return {
-          nickname: item.nickname,
-          phoneNumber: item.phoneNumber,
-          id: item.uid,
-          gender: item.gender,
-          avatar: item.avatarUrl,
-          location: item.location,
-          created_at: moment(item.created_at).format("LLLL"),
-          email: item.email
-        };
-      })
+      data: doc
+        ? { message: "No data yet" }
+        : doc.map((item) => {
+            return {
+              nickname: item.nickname,
+              phoneNumber: item.phoneNumber,
+              id: item.uid,
+              gender: item.gender,
+              avatar: item.avatarUrl,
+              location: item.location,
+              created_at: moment(item.created_at).format("LLLL"),
+              email: item.email,
+            };
+          }),
     });
     if (err) res.status(400).json({ err });
   });
@@ -32,7 +34,7 @@ router.get("/:uid", (req, res) => {
     `SELECT * FROM user WHERE uid = ${req.params.uid}`,
     (err, doc) => {
       res.status(200).json({
-        data: doc.map(item => {
+        data: doc.map((item) => {
           return {
             nickname: item.nickname,
             phoneNumber: item.phoneNumber,
@@ -42,9 +44,9 @@ router.get("/:uid", (req, res) => {
             company: item.company,
             location: item.location,
             created_at: moment(item.created_at).format("LLLL"),
-            email: item.email
+            email: item.email,
           };
-        })
+        }),
       });
       if (err) {
         res.status(400).json({ err });
@@ -63,7 +65,7 @@ router.get("/gender/:gender", (req, res) => {
         return;
       }
       res.status(200).json({
-        data: doc.map(item => {
+        data: doc.map((item) => {
           return {
             nickname: item.nickname,
             phoneNumber: item.phoneNumber,
@@ -72,9 +74,9 @@ router.get("/gender/:gender", (req, res) => {
             avatar: item.avatarUrl,
             location: item.location,
             created_at: moment(item.created_at).format("LLLL"),
-            email: item.email
+            email: item.email,
           };
-        })
+        }),
       });
     }
   );
@@ -89,7 +91,7 @@ router.get("/searchByName/:name", (req, res) => {
         return;
       }
       res.status(200).json({
-        data: doc.map(item => {
+        data: doc.map((item) => {
           return {
             nickname: item.nickname,
             phoneNumber: item.phoneNumber,
@@ -98,9 +100,9 @@ router.get("/searchByName/:name", (req, res) => {
             avatar: item.avatarUrl,
             location: item.location,
             created_at: moment(item.created_at).format("LLLL"),
-            email: item.email
+            email: item.email,
           };
-        })
+        }),
       });
     }
   );
@@ -115,7 +117,7 @@ router.get("/searchByEmail/:email", (req, res) => {
         return;
       }
       res.status(200).json({
-        data: doc.map(item => {
+        data: doc.map((item) => {
           return {
             nickname: item.nickname,
             phoneNumber: item.phoneNumber,
@@ -124,9 +126,9 @@ router.get("/searchByEmail/:email", (req, res) => {
             avatar: item.avatarUrl,
             location: item.location,
             created_at: moment(item.created_at).format("LLLL"),
-            email: item.email
+            email: item.email,
           };
-        })
+        }),
       });
     }
   );
@@ -139,7 +141,7 @@ router.get("/orderByName/ascending", (req, res) => {
       return;
     }
     res.status(200).json({
-      data: doc.map(item => {
+      data: doc.map((item) => {
         return {
           nickname: item.nickname,
           phoneNumber: item.phoneNumber,
@@ -148,9 +150,9 @@ router.get("/orderByName/ascending", (req, res) => {
           avatar: item.avatarUrl,
           location: item.location,
           created_at: moment(item.created_at).format("LLLL"),
-          email: item.email
+          email: item.email,
         };
-      })
+      }),
     });
   });
 });
@@ -164,7 +166,7 @@ router.get("/orderByName/descending", (req, res) => {
         return;
       }
       res.status(200).json({
-        data: doc.map(item => {
+        data: doc.map((item) => {
           return {
             nickname: item.nickname,
             phoneNumber: item.phoneNumber,
@@ -173,9 +175,9 @@ router.get("/orderByName/descending", (req, res) => {
             avatar: item.avatarUrl,
             location: item.location,
             created_at: moment(item.created_at).format("LLLL"),
-            email: item.email
+            email: item.email,
           };
-        })
+        }),
       });
     }
   );
@@ -235,7 +237,7 @@ router.post("/register", (req, res) => {
           s: 200,
           d: "retro",
           protocol: "http",
-          r: "pg"
+          r: "pg",
         });
         if (errors.length > 0) {
           return res.status(400).json({ errors });
@@ -267,7 +269,7 @@ router.post("/login", (req, res) => {
           res.status(403).json({
             error: err,
             status: 403,
-            message: "Sai mật khẩu"
+            message: "Sai mật khẩu",
           });
           return;
         }
@@ -275,17 +277,17 @@ router.post("/login", (req, res) => {
           {
             id: doc.uid,
             nickname: doc.nickname,
-            email: doc.email
+            email: doc.email,
           },
           "s3cr3t",
           {
-            expiresIn: "1h"
+            expiresIn: "1h",
           }
         );
         res.status(200).json({
           message: "Logged in",
           headers: `Bearer ${token}`,
-          data: doc
+          data: doc,
         });
       });
     }
@@ -302,7 +304,7 @@ router.delete("/:uid", (req, res) => {
       }
       return res.status(200).json({
         response: doc,
-        message: "Delete successful"
+        message: "Delete successful",
       });
     }
   );
