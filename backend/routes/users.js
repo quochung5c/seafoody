@@ -10,7 +10,7 @@ moment.locale("vi");
 router.get("/", (req, res) => {
   connection.query("SELECT * FROM user;", (err, doc) => {
     res.status(200).json({
-      data: doc
+      data: doc.length === 0
         ? { message: "No data yet" }
         : doc.map((item) => {
             return {
