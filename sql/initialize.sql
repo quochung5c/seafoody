@@ -7,201 +7,97 @@ SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
 
--- -----------------------------------------------------
--- Schema mydb
--- -----------------------------------------------------
--- -----------------------------------------------------
--- Schema seafoody
--- -----------------------------------------------------
+CREATE TABLE Company(
+	companyId INT NOT NULL auto_increment,
+    companyName varchar(255) not null,
+    avatarUrl varchar(255) not null,
+    location varchar(255) not null,
+    description varchar(255) not null,
+    phoneNumber varchar(255) not null,
+    primary key (companyId)
+);
 
--- -----------------------------------------------------
--- Schema seafoody
--- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `seafoody` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci ;
-USE `seafoody` ;
+CREATE TABLE User (
+	uid INT NOT NULL auto_increment,
+    nickname  VARCHAR(255) NULL DEFAULT NULL,
+    created_at TIMESTAMP default now(),
+    gender enum("Male","Female"),
+    location VARCHAR(255) NULL DEFAULT NULL,
+    phoneNumber VARCHAR(255) NULL DEFAULT NULL,
+    email VARCHAR(255) NULL DEFAULT NULL,
+    avatarUrl VARCHAR(255) NULL DEFAULT NULL,
+    password VARCHAR(255) NULL DEFAULT NULL,
+    company int, 
+    primary key (uid),
+    foreign key (company) references Company(companyId)
+);
 
--- -----------------------------------------------------
--- Table `seafoody`.`company`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `seafoody`.`company` (
-  `companyId` INT NOT NULL AUTO_INCREMENT,
-  `companyName` VARCHAR(255) NULL DEFAULT NULL,
-  `avatarUrl` VARCHAR(255) NULL DEFAULT NULL,
-  `location` VARCHAR(255) NULL DEFAULT NULL,
-  `description` VARCHAR(255) NULL DEFAULT NULL,
-  `phoneNumber` VARCHAR(255) NULL DEFAULT NULL,
-  PRIMARY KEY (`companyId`),
-  UNIQUE INDEX `companyId` (`companyId` ASC) VISIBLE)
-ENGINE = InnoDB
-AUTO_INCREMENT = 7
-DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
+CREATE TABLE Payment (
+	creditNum VARCHAR(255) NOT NULL,
+    expireDate DATE NOT NULL,
+    amount DECIMAL(19,0) NOT NULL,
+    user int,
+    primary key (creditNum),
+    foreign key (user) references User(uid) on delete cascade
+);
 
+CREATE TABLE OrderStatus(
+	statusCode int not null,
+    statusText VARCHAR(255) NULL DEFAULT NULL,
+    statusColor VARCHAR(10) NULL DEFAULT NULL,
+    statusDesc VARCHAR(255) NULL DEFAULT NULL,
+    primary key (statusCode)
+);
 
--- -----------------------------------------------------
--- Table `seafoody`.`user`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `seafoody`.`user` (
-  `uid` INT NOT NULL AUTO_INCREMENT,
-  `nickname` VARCHAR(255) NULL DEFAULT NULL,
-  `created_at` TIMESTAMP NULL DEFAULT NULL,
-  `gender` ENUM('Male', 'Female') NULL DEFAULT NULL,
-  `location` VARCHAR(255) NULL DEFAULT NULL,
-  `phoneNumber` VARCHAR(255) NULL DEFAULT NULL,
-  `email` VARCHAR(255) NULL DEFAULT NULL,
-  `avatarUrl` VARCHAR(255) NULL DEFAULT NULL,
-  `password` VARCHAR(255) NULL DEFAULT NULL,
-  `company` INT NULL DEFAULT NULL,
-  PRIMARY KEY (`uid`),
-  UNIQUE INDEX `uid` (`uid` ASC) VISIBLE,
-  UNIQUE INDEX `password` (`password` ASC) VISIBLE,
-  INDEX `company` (`company` ASC) VISIBLE,
-  CONSTRAINT `user_ibfk_1`
-    FOREIGN KEY (`company`)
-    REFERENCES `seafoody`.`company` (`companyId`))
-ENGINE = InnoDB
-AUTO_INCREMENT = 12
-DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
+CREATE TABLE HoaDon(
+	id INT NOT NULL auto_increment,
+    created_date date default now(),
+    shipping_time timestamp not null,
+    shipping_address VARCHAR(255) NULL DEFAULT NULL,
+    payment_method enum("Credit Card","COD") not null,
+    statusCode int,
+    comments VARCHAR(255) NULL DEFAULT NULL,
+    creditCard VARCHAR(255) NULL DEFAULT NULL,
+    user int,
+    primary key (id),
+    foreign key (statusCode) references OrderStatus(statusCode)  on delete cascade,
+    foreign key (creditCard) references payment(creditNum)  on delete cascade,
+    foreign key (user) references User(uid)  on delete cascade
+);
 
+CREATE TABLE Promotion(
+	promotionId INT NOT NULL AUTO_INCREMENT,
+    promoCode VARCHAR(20) NULL DEFAULT NULL,
+    promoPercent SMALLINT NULL DEFAULT NULL,
+    expireDate timestamp,
+    promoDescription VARCHAR(255) NULL DEFAULT NULL,
+    primary key (promotionId)
+);
 
--- -----------------------------------------------------
--- Table `seafoody`.`payment`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `seafoody`.`payment` (
-  `creditNum` VARCHAR(255) NOT NULL,
-  `expireDate` DATE NULL DEFAULT NULL,
-  `amount` DECIMAL(19,0) NULL DEFAULT NULL,
-  `user` INT NULL DEFAULT NULL,
-  UNIQUE INDEX `creditNum` (`creditNum` ASC) VISIBLE,
-  INDEX `user` (`user` ASC) VISIBLE,
-  CONSTRAINT `payment_ibfk_1`
-    FOREIGN KEY (`user`)
-    REFERENCES `seafoody`.`user` (`uid`))
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
+CREATE TABLE Product(
+	id int not null auto_increment,
+    productName VARCHAR(255) NULL DEFAULT NULL,
+    price decimal(19,0) not null,
+    productType enum('Đông lạnh', 'Tươi sống', 'Đồ khô', 'Khác...'),
+    posted_at timestamp default now(),
+    company int,
+    description VARCHAR(255) NULL DEFAULT NULL,
+    promotion int,
+    likes int default 0,
+    pricePerRatio ENUM('kg', 'g', 'chiếc', 'con') NULL DEFAULT NULL,
+    imageUrl VARCHAR(255) NULL DEFAULT NULL,
+    primary key (id),
+    foreign key (company) references Company(companyId)  on delete cascade,
+    foreign key (promotion) references Promotion(promotionId)  on delete cascade
+);
 
-
--- -----------------------------------------------------
--- Table `seafoody`.`orderstatus`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `seafoody`.`orderstatus` (
-  `statusCode` INT NOT NULL,
-  `statusText` VARCHAR(255) NULL DEFAULT NULL,
-  `statusColor` VARCHAR(10) NULL DEFAULT NULL,
-  `statusDesc` VARCHAR(255) NULL DEFAULT NULL,
-  PRIMARY KEY (`statusCode`),
-  UNIQUE INDEX `statusCode` (`statusCode` ASC) VISIBLE)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
-
-
--- -----------------------------------------------------
--- Table `seafoody`.`hoadon`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `seafoody`.`hoadon` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `created_date` DATE NULL DEFAULT NULL,
-  `shipping_time` TIMESTAMP NULL DEFAULT NULL,
-  `shipping_address` VARCHAR(255) NULL DEFAULT NULL,
-  `payment_method` ENUM('Credit Card', 'COD') NULL DEFAULT NULL,
-  `statusCode` INT NULL DEFAULT NULL,
-  `comments` VARCHAR(255) NULL DEFAULT NULL,
-  `creditCard` VARCHAR(255) NULL DEFAULT NULL,
-  `user` INT NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE INDEX `id` (`id` ASC) VISIBLE,
-  INDEX `statusCode` (`statusCode` ASC) VISIBLE,
-  INDEX `handle_creditCard` (`creditCard` ASC) VISIBLE,
-  INDEX `user` (`user` ASC) VISIBLE,
-  CONSTRAINT `handle_creditCard`
-    FOREIGN KEY (`creditCard`)
-    REFERENCES `seafoody`.`payment` (`creditNum`),
-  CONSTRAINT `hoadon_ibfk_2`
-    FOREIGN KEY (`statusCode`)
-    REFERENCES `seafoody`.`orderstatus` (`statusCode`),
-  CONSTRAINT `hoadon_ibfk_3`
-    FOREIGN KEY (`user`)
-    REFERENCES `seafoody`.`user` (`uid`)
-    ON DELETE CASCADE)
-ENGINE = InnoDB
-AUTO_INCREMENT = 4
-DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
-
-
--- -----------------------------------------------------
--- Table `seafoody`.`promotion`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `seafoody`.`promotion` (
-  `promotionId` INT NOT NULL AUTO_INCREMENT,
-  `promocode` VARCHAR(20) NULL DEFAULT NULL,
-  `promoPercent` SMALLINT NULL DEFAULT NULL,
-  `exprireDate` TIMESTAMP NULL DEFAULT NULL,
-  `promoDescription` VARCHAR(255) NULL DEFAULT NULL,
-  PRIMARY KEY (`promotionId`),
-  UNIQUE INDEX `promotionId` (`promotionId` ASC) VISIBLE)
-ENGINE = InnoDB
-AUTO_INCREMENT = 4
-DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
-
-
--- -----------------------------------------------------
--- Table `seafoody`.`product`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `seafoody`.`product` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `productName` VARCHAR(255) NULL DEFAULT NULL,
-  `price` DECIMAL(19,0) NULL DEFAULT NULL,
-  `productType` ENUM('Đông lạnh', 'Tươi sống', 'Đồ khô', 'Khác...') NULL DEFAULT NULL,
-  `posted_at` TIMESTAMP NULL DEFAULT NULL,
-  `company` INT NULL DEFAULT NULL,
-  `description` VARCHAR(255) NULL DEFAULT NULL,
-  `promotion` INT NULL DEFAULT NULL,
-  `likes` INT NULL DEFAULT '0',
-  `pricePerRatio` ENUM('kg', 'g', 'chiếc', 'con') NULL DEFAULT NULL,
-  `imageUrl` VARCHAR(255) NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE INDEX `id` (`id` ASC) VISIBLE,
-  INDEX `company` (`company` ASC) VISIBLE,
-  INDEX `promotion` (`promotion` ASC) VISIBLE,
-  CONSTRAINT `product_ibfk_1`
-    FOREIGN KEY (`company`)
-    REFERENCES `seafoody`.`company` (`companyId`),
-  CONSTRAINT `product_ibfk_2`
-    FOREIGN KEY (`promotion`)
-    REFERENCES `seafoody`.`promotion` (`promotionId`))
-ENGINE = InnoDB
-AUTO_INCREMENT = 11
-DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
-
-
--- -----------------------------------------------------
--- Table `seafoody`.`product_hoadon`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `seafoody`.`product_hoadon` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `HoaDon` INT NULL DEFAULT NULL,
-  `qty` INT NULL DEFAULT NULL,
-  `product` INT NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE INDEX `id` (`id` ASC) VISIBLE,
-  INDEX `HoaDon` (`HoaDon` ASC) VISIBLE,
-  INDEX `product` (`product` ASC) VISIBLE,
-  CONSTRAINT `product_hoadon_ibfk_1`
-    FOREIGN KEY (`HoaDon`)
-    REFERENCES `seafoody`.`hoadon` (`id`),
-  CONSTRAINT `product_hoadon_ibfk_2`
-    FOREIGN KEY (`product`)
-    REFERENCES `seafoody`.`product` (`id`))
-ENGINE = InnoDB
-AUTO_INCREMENT = 2
-DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
+CREATE TABLE Product_hoadon(
+    hoadon int,
+    qty int,
+    product int,
+	foreign key (hoadon) references HoaDon(id),
+    foreign key (product) references Product(id)
+);
 
 
 SET SQL_MODE=@OLD_SQL_MODE;

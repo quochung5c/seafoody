@@ -8,7 +8,7 @@ const moment = require("moment");
 moment.locale("vi");
 
 router.get("/", (req, res) => {
-  connection.query("SELECT * FROM user;", (err, doc) => {
+  connection.query("SELECT * FROM User;", (err, doc) => {
     if (err) res.status(400).json({ err });
     if (!doc) return res.status(404).json({ message: "Not found" });
     else {
@@ -32,7 +32,7 @@ router.get("/", (req, res) => {
 
 router.get("/:uid", (req, res) => {
   connection.query(
-    `SELECT * FROM user WHERE uid = ${req.params.uid}`,
+    `SELECT * FROM User WHERE uid = ${req.params.uid}`,
     (err, doc) => {
       res.status(200).json({
         data: doc.map((item) => {

@@ -35,7 +35,7 @@ const upload = multer({
 
 router.get("/", (req, res) => {
   connection.query(
-    `SELECT company.companyId, company.companyName, company.location, company.phoneNumber, company.description FROM company;`,
+    `SELECT Company.CompanyId, Company.CompanyName, Company.location, Company.phoneNumber, Company.description FROM Company;`,
     (error, doc) => {
       if (error) {
         res.status(400).json({ error });
@@ -44,8 +44,8 @@ router.get("/", (req, res) => {
       res.status(200).json({
         data: doc.map(item => {
           return {
-            id: item.companyId,
-            name: item.companyName,
+            id: item.CompanyId,
+            name: item.CompanyName,
             location: item.location,
             phoneNumber: item.phoneNumber,
             description: item.description
@@ -58,7 +58,7 @@ router.get("/", (req, res) => {
 
 router.get("/:id", (req, res) => {
   connection.query(
-    `SELECT * FROM company WHERE companyId = ${req.params.id};`,
+    `SELECT * FROM Company WHERE CompanyId = ${req.params.id};`,
     (error, doc) => {
       if (error) {
         res.status(400).json({ error });
@@ -67,9 +67,9 @@ router.get("/:id", (req, res) => {
       res.status(200).json({
         data: doc.map(item => {
           return {
-            id: item.companyId,
+            id: item.CompanyId,
             avatar: item.avatarUrl,
-            name: item.companyName,
+            name: item.CompanyName,
             location: item.location,
             phoneNumber: item.phoneNumber,
             description: item.description
@@ -83,10 +83,10 @@ router.get("/:id", (req, res) => {
 router.get("/products/:company", (req, res) => {
   connection.query(
     `SELECT product.id, product.productName, product.price, product.likes, product.productType, promotion.promoPercent, product.posted_at, product.description, product.pricePerRatio, 
-    company.companyName, product.company, promotion.promocode FROM ((Product 
-      INNER JOIN Company ON product.company = company.companyId)
+    Company.CompanyName, product.Company, promotion.promocode FROM ((Product 
+      INNER JOIN Company ON product.Company = Company.CompanyId)
         INNER JOIN promotion ON product.promotion = promotion.promotionId)
-      WHERE product.company = ${req.params.company};`,
+      WHERE product.Company = ${req.params.company};`,
     (err, doc) => {
       res.status(200).json({
         data: doc
@@ -122,7 +122,7 @@ router.post("/", upload.single("image"), (req, res) => {
 
 router.get("/searchById/:id", (req, res) => {
   connection.query(
-    `SELECT company.companyId, company.companyName, company.location, company.phoneNumber, company.description FROM company WHERE company.companyId = ${req.params.id};`,
+    `SELECT Company.CompanyId, Company.CompanyName, Company.location, Company.phoneNumber, Company.description FROM Company WHERE Company.CompanyId = ${req.params.id};`,
     (error, doc) => {
       if (error) {
         res.status(400).json({ error });
@@ -146,9 +146,9 @@ router.get("/searchById/:id", (req, res) => {
 router.get("/searchByName/:name", (req, res) => {});
 
 // Lấy các người dùng thuộc công ty
-router.get("/users/:company", (req, res) => {
+router.get("/users/:Company", (req, res) => {
   connection.query(
-    `SELECT * FROM User WHERE company = ${req.params.company}`,
+    `SELECT * FROM User WHERE Company = ${req.params.Company}`,
     (error, document) => {
       if (error) {
         res.status(400).json({ error });
@@ -159,9 +159,9 @@ router.get("/users/:company", (req, res) => {
   );
 });
 
-router.delete("/:company", (req, res) => {
+router.delete("/:Company", (req, res) => {
   connection.query(
-    `DELETE FROM Company WHERE companyId = ${req.params.company}`,
+    `DELETE FROM Company WHERE CompanyId = ${req.params.Company}`,
     (error, response) => {
       if (error) {
         res.status(400).json({ error });
@@ -172,11 +172,11 @@ router.delete("/:company", (req, res) => {
   );
 });
 
-router.patch("/:company", (req, res) => {
+router.patch("/:Company", (req, res) => {
   connection.query(
-    `UPDATE Company SET companyName = '${req.body.companyName}',
+    `UPDATE Company SET CompanyName = '${req.body.CompanyName}',
   location = '${req.body.location}', description = '${req.body.description}',
-  phoneNumber = '${req.body.phoneNumber}' WHERE companyId = ${req.params.company} `,
+  phoneNumber = '${req.body.phoneNumber}' WHERE CompanyId = ${req.params.Company} `,
     (error, response) => {
       if (error) {
         res.status(400).json({ message: "Có lỗi", error });
