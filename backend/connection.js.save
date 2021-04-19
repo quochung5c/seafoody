@@ -1,11 +1,10 @@
 const mysql = require("mysql");
 
 const connection = mysql.createConnection({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASS,
-  database: process.env.DB_NAME,
-  port: process.env.DB_PORT,
+  host: "",
+  user: "test",
+  password: "P@ssw0rd",
+  database: "seafoody",
   multipleStatements: true
 });
 
@@ -15,3 +14,4 @@ connection.connect(err => {
 });
 
 module.exports = connection;
+203.171.21.65
